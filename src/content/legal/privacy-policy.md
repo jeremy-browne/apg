@@ -9,8 +9,7 @@ ogImage:
     https://res.cloudinary.com/dellp9a4z/image/upload/v1756758390/og-privacy-policy_eekzan.png
   alt: >-
     The graphic has a two-column layout on a light blue, gridded background. On
-    the left, it displays a profile picture of a man with the text "Daniel
-    Adrian's SPACE" below. The right side features the large heading "Privacy
+    the left, it displays a profile picture of a man with the text "Jeremy Browne's SPACE" below. The right side features the large heading "Privacy
     Policy" and a brief description of what the policy covers, which is how the
     website collects, uses, and protects personal information.
 ---

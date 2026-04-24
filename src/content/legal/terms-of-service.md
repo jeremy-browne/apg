@@ -8,8 +8,7 @@ ogImage:
     https://res.cloudinary.com/dellp9a4z/image/upload/v1756758388/og-terms-of-service_l6gfoa.png
   alt: >-
     The graphic has a two-column layout on a light blue, gridded background. On
-    the left, it displays a profile picture of a man with the text "Daniel
-    Adrian's SPACE" below. The right side features the large heading "Terms of
+    the left, it displays a profile picture of a man with the text "Jeremy Browne's SPACE" below. The right side features the large heading "Terms of
     Service" and a brief description inviting users to read the terms and
     conditions for using the website and its services.
 ---
