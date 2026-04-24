@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, fontProviders } from "astro/config";
+import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
 import tailwindcss from "@tailwindcss/vite";
@@ -11,6 +12,7 @@ import rehypeSlug from "rehype-slug";
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: netlify(),
   site: "https://apg-aviation.netlify.app/",
 
   fonts: [
