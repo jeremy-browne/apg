@@ -10,7 +10,10 @@ async function verifyTurnstile(token: string, secret: string): Promise<boolean> 
             body: new URLSearchParams({ secret, response: token }),
         },
     );
-    const data = (await res.json()) as { success: boolean };
+    const data = (await res.json()) as { success: boolean; "error-codes"?: string[] };
+    if (!data.success) {
+        console.error("[turnstile] verification failed:", data["error-codes"]);
+    }
     return data.success;
 }
 
@@ -26,6 +29,8 @@ async function addKitSubscriber(email: string, apiSecret: string): Promise<void>
 
     // 409 = subscriber already exists — treat as success
     if (!res.ok && res.status !== 409) {
+        const body = await res.text();
+        console.error(`[kit] API error ${res.status}:`, body);
         throw new Error(`Kit API error: ${res.status}`);
     }
 }
@@ -49,7 +54,16 @@ export const server = {
                         message: "Turnstile verification failed.",
                     });
                 }
-                const valid = await verifyTurnstile(token, turnstileSecret);
+                let valid: boolean;
+                try {
+                    valid = await verifyTurnstile(token, turnstileSecret);
+                } catch (err) {
+                    console.error("[turnstile] fetch error:", err);
+                    throw new ActionError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: "Could not verify request. Please try again.",
+                    });
+                }
                 if (!valid) {
                     throw new ActionError({
                         code: "BAD_REQUEST",
@@ -59,6 +73,7 @@ export const server = {
             }
 
             if (!kitApiSecret) {
+                console.error("[kit] KIT_API_SECRET is not set");
                 throw new ActionError({
                     code: "INTERNAL_SERVER_ERROR",
                     message: "Newsletter not configured.",
@@ -67,7 +82,8 @@ export const server = {
 
             try {
                 await addKitSubscriber(input.email, kitApiSecret);
-            } catch {
+            } catch (err) {
+                console.error("[kit] subscribe failed:", err);
                 throw new ActionError({
                     code: "INTERNAL_SERVER_ERROR",
                     message: "Failed to subscribe. Please try again later.",
