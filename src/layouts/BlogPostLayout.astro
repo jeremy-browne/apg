@@ -1,0 +1,168 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    pubDate: string;
+    author?: string;
+    tags?: string[];
+    image?: { url: string; alt: string };
+  };
+}
+
+const { frontmatter } = Astro.props;
+const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-AU', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <article class="post">
+    {frontmatter.image && (
+      <img class="hero-image" src={frontmatter.image.url} alt={frontmatter.image.alt} />
+    )}
+    <header class="post-header">
+      <div class="post-meta">
+        <time datetime={frontmatter.pubDate}>{formattedDate}</time>
+        {frontmatter.author && <span>by {frontmatter.author}</span>}
+      </div>
+      <h1>{frontmatter.title}</h1>
+      {frontmatter.description && <p class="description">{frontmatter.description}</p>}
+      {frontmatter.tags && (
+        <div class="tags">
+          {frontmatter.tags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+      )}
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+    <footer class="post-footer">
+      <a href="/blog/">← Back to all posts</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    max-width: 72ch;
+    margin: 0 auto;
+  }
+
+  .hero-image {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    font-size: 1.125rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .post-footer a {
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .post-footer a:hover {
+    color: var(--sky);
+    text-decoration: none;
+  }
+
+  .prose :global(h2),
+  .prose :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 0.375rem;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+
+  .prose :global(th) {
+    background: var(--off-white);
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .prose :global(code) {
+    background: var(--off-white);
+    padding: 0.15em 0.35em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--gold);
+    padding-left: 1rem;
+    color: var(--muted);
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+</style>

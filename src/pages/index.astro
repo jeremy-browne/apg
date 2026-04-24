@@ -1,20 +1,55 @@
 ---
+import { getCollection } from "astro:content";
+import Container from "../components/layouts/Container.astro";
+import ContentGrid from "../components/layouts/sections/ContentGrid.astro";
+import FeaturedContent from "../components/layouts/sections/FeaturedContent.astro";
+import EmptyState from "../components/ui/EmptyState.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { attachMeta } from "../utils/meta";
 
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+
+const sortedPosts = allPosts.sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const latestPosts = sortedPosts.slice(0, 3).map((post) => attachMeta(post));
+
+const featured = allPosts
+    .filter((item) => item.data.featured !== undefined)
+    .sort((a, b) => (a.data.featured ?? 0) - (b.data.featured ?? 0));
+
+const hasContent = featured.length > 0 || latestPosts.length > 0;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-        <a href="/">Home</a>
-        <a href="/about/">About</a>
-        <a href="/blog/">Blog</a>
-		<h1>My Astro Site</h1>
-	</body>
-</html>
+<BaseLayout
+    title="Home"
+    description="A student pilot's blog covering Australian aviation — training flights, theory, exams, and more."
+>
+    <Container class="space-y-24 py-12">
+        {
+            hasContent ? (
+                <>
+                    {featured.length > 0 && (
+                        <FeaturedContent items={featured} />
+                    )}
+
+                    {latestPosts.length > 0 && (
+                        <ContentGrid
+                            title="Latest Posts"
+                            href="/blog"
+                            viewAllText="View all posts →"
+                            items={latestPosts}
+                        />
+                    )}
+
+                </>
+            ) : (
+                <EmptyState
+                    title="Nothing here yet..."
+                    message="Check back soon for new items!"
+                />
+            )
+        }
+    </Container>
+</BaseLayout>
