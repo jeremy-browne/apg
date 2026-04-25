@@ -11,7 +11,8 @@
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(npx --yes degit truedaniyyel/basic-blog ./ --force)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "WebFetch(domain:developers.kit.com)"
     ]
   }
 }

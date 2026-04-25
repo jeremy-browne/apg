@@ -22,7 +22,7 @@ async function addKitSubscriber(email: string, apiSecret: string): Promise<void>
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${apiSecret}`,
+            "X-Kit-Api-Key": apiSecret,
         },
         body: JSON.stringify({ email_address: email }),
     });
