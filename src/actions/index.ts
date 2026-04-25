@@ -31,7 +31,7 @@ async function addKitSubscriber(email: string, apiSecret: string): Promise<void>
     if (!res.ok && res.status !== 409) {
         const body = await res.text();
         console.error(`[kit] API error ${res.status}:`, body);
-        throw new Error(`Kit API error: ${res.status}`);
+        throw new Error(`Kit API error ${res.status}: ${body}`);
     }
 }
 
@@ -83,10 +83,11 @@ export const server = {
             try {
                 await addKitSubscriber(input.email, kitApiSecret);
             } catch (err) {
-                console.error("[kit] subscribe failed:", err);
+                const detail = err instanceof Error ? err.message : String(err);
+                console.error("[kit] subscribe failed:", detail);
                 throw new ActionError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: "Failed to subscribe. Please try again later.",
+                    message: `Debug: ${detail}`,
                 });
             }
 
