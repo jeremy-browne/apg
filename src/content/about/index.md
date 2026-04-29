@@ -3,20 +3,16 @@ title: "About"
 description: "About APG Aviation — a student pilot's blog covering Australian pilot training."
 ---
 
-G'day! I'm a student pilot working towards my Private Pilot Licence (PPL) in Australia. This blog is where I document the journey — the good flights, the tough lessons, and everything in between.
+Aussie Pilot Guide is a home for anyone who loves flying in Australia.
 
-## Why this blog?
+Whether you're researching your first trial flight, grinding through your PPL theory, building hours towards a career, or just passionate about aviation, this site is here to make the journey a little clearer.
 
-Learning to fly is one of the most challenging and rewarding things I've done. There's a huge amount to absorb — from CASA regulations and airspace to navigation, meteorology, and aircraft systems. Writing helps me process it all, and hopefully it helps others on the same path.
+I cover everything from flight training tips and exam prep to cross-country planning, weather, GA flying culture, and what it actually takes to build a career in Australian aviation.
 
-## What you'll find here
+# About me
 
-- Honest accounts of training flights and what I took away from each one
-- Study tips for the BAK, PPL theory, and CPL exams
-- Plain-language breakdowns of aviation concepts
-- Australian-specific info — CASA, ATIS, CTAFs, airspace, and more
-- Gear, apps, and resources I've found useful
+I'm Jeremy, a commercial pilot and flight instructor based in Victoria's Yarra Valley. I came to aviation after careers in the military and the tech industry, so I know what it's like to chase this dream from a non-traditional starting point.
 
-## Get in touch
+These days I spend most of my time in training aircraft, helping students go from zero experience to confident pilots. A lot of what I write here comes directly from that environment.
 
-Have a question or want to share your own experience? Feel free to reach out via the contact page.
+If you've got a question or a topic you'd like covered, I'd love to hear from you. Get in touch or subscribe to the newsletter to stay in the loop.
