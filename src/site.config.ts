@@ -1,5 +1,5 @@
 export const SITE_SETTINGS = {
-  title: "APG Aviation",
+  title: "Aussie Pilot Guide",
   description:
     "A pilot training blog covering Australian aviation — theory, training flights, exams, and life as a student pilot.",
   owner: "APG",

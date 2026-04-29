@@ -1,6 +1,6 @@
 ---
 title: "About"
-description: "About APG Aviation — a student pilot's blog covering Australian pilot training."
+description: "About Aussie Pilot Guide — a student pilot's blog covering Australian pilot training."
 ---
 
 Aussie Pilot Guide is a home for anyone who loves flying in Australia.
