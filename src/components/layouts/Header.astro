@@ -122,6 +122,14 @@ import { Icon } from "astro-icon/components";
         document.addEventListener("overlay-clicked", closeMenu);
         mediaQuery.addEventListener("change", handleMediaChange);
     }
+
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key !== "/") return;
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement).isContentEditable) return;
+        e.preventDefault();
+        window.location.href = "/search";
+    });
 </script>
 
 <style>
