@@ -34,7 +34,7 @@ import { Icon } from "astro-icon/components";
                     href="/search"
                     class="flex items-center rounded-lg p-2 transition-transform duration-250 ease-out active:scale-95 sm:bg-neutral-200 dark:sm:bg-neutral-600"
                     aria-label="Search"
-                    data-astro-prefetch="hover"
+                    data-search-trigger
                 >
                     <Icon
                         name="lucide:search"
@@ -123,12 +123,12 @@ import { Icon } from "astro-icon/components";
         mediaQuery.addEventListener("change", handleMediaChange);
     }
 
-    document.addEventListener("keydown", (e: KeyboardEvent) => {
-        if (e.key !== "/") return;
-        const tag = (e.target as HTMLElement).tagName;
-        if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement).isContentEditable) return;
+    const searchTrigger = document.querySelector<HTMLAnchorElement>(
+        "[data-search-trigger]",
+    );
+    searchTrigger?.addEventListener("click", (e) => {
         e.preventDefault();
-        window.location.href = "/search";
+        document.dispatchEvent(new CustomEvent("open-search"));
     });
 </script>
 
