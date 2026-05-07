@@ -1,13 +1,13 @@
 ---
-draft: false
-featured: "1"
+draft: true
+featured: "none"
 authors:
   - APG
 title: My First Lesson — What Nobody Tells You
 description: >-
   The first dual flight is nothing like the sim. Here is what I wish I had
   known before stepping into the aircraft for the very first time.
-pubDate: 2025-01-15T08:00:00.000Z
+pubDate: 2026-01-15T08:00:00.000Z
 tags:
   - training
   - student pilot

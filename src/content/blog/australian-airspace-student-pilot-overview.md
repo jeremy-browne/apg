@@ -1,13 +1,13 @@
 ---
-draft: false
-featured: "3"
+draft: true
+featured: "none"
 authors:
   - APG
 title: Australian Airspace — A Student Pilot Overview
 description: >-
   Australian airspace classification can feel overwhelming at first. Here is a
   plain-language breakdown that helped it click for me.
-pubDate: 2025-03-10T08:00:00.000Z
+pubDate: 2026-03-10T08:00:00.000Z
 tags:
   - airspace
   - navigation

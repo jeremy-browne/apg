@@ -5,7 +5,6 @@ import FormattedDate from "./FormattedDate.astro";
 import PostCopyright from "./PostCopyright.astro";
 import Series from "./Series.astro";
 import Tags from "./Tags.astro";
-import Button from "../ui/button/Button.astro";
 import OptimizedImage from "../ui/OptimizedImage.astro";
 import Tooltip from "../ui/Tooltip.astro";
 import { formatDate } from "../../utils/formatDate";
@@ -21,15 +20,13 @@ interface Props {
 
 const { entry, loading = "eager", fetchpriority = "high" } = Astro.props;
 
-const { data, collection, meta } = entry;
+const { data, meta } = entry;
 const { title, pubDate, updatedDate, authors, featured, image, series, tags } =
     data;
 const { readingTimeText } = meta || {};
 
 const license = data.license ? await getEntry(data.license) : undefined;
 
-const demoUrl = "demoUrl" in data ? data.demoUrl : undefined;
-const repoUrl = "repoUrl" in data ? data.repoUrl : undefined;
 ---
 
 <header class="mb-12">
@@ -58,7 +55,7 @@ const repoUrl = "repoUrl" in data ? data.repoUrl : undefined;
             {
                 updatedDate ? (
                     <Tooltip
-                        id={`pubdate-${collection}-${entry.id}`}
+                        id={`pubdate-${entry.id}`}
                         label={`Published: ${formatDate(pubDate)}`}
                     >
                         <span class="cursor-help border-b border-dashed border-current">
@@ -87,24 +84,6 @@ const repoUrl = "repoUrl" in data ? data.repoUrl : undefined;
     {series && <Series {series} class="mt-6" />}
     {tags.length > 0 && <Tags {tags} class="mt-6" />}
 
-    {
-        collection === "projects" && (demoUrl || repoUrl) && (
-            <div class="mt-6 flex gap-4">
-                {demoUrl && (
-                    <Button href={demoUrl} class="gap-2">
-                        <Icon name="lucide:eye" class="size-5" />
-                        Live Demo
-                    </Button>
-                )}
-                {repoUrl && (
-                    <Button intent={"secondary"} href={repoUrl} class="gap-2">
-                        <Icon name="lucide:github" class="size-5" />
-                        View Source
-                    </Button>
-                )}
-            </div>
-        )
-    }
 
     {image && (
         <OptimizedImage

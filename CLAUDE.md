@@ -8,7 +8,7 @@ An Australian flight training blog and resource site helping student pilots navi
 - **Content:** Markdown/MDX in `src/content/`
 - **Styling:** Tailwind CSS
 - **Interactive components:** React (used sparingly via Astro islands, only where interactivity is needed)
-- **Deployment:** Cloudflare Pages (or Netlify/Vercel)
+- **Deployment:** Netlify
 - **Package manager:** npm
 
 ## Commands
@@ -65,6 +65,25 @@ Use these categories to organise posts. New categories can be added but check ex
 - `operations` — flight planning, weather, airspace
 - `lifestyle` — what training is actually like, day-in-the-life
 
+### Images
+
+Blog post images live in `public/images/blog/`. Reference them in frontmatter as:
+
+```yaml
+image:
+  src: /images/blog/your-image.webp
+  alt: Descriptive alt text
+```
+
+**Specs before committing:**
+
+- **Aspect ratio:** 16:9 — all card and post header layouts crop to this ratio
+- **Resolution:** 1600×900px
+- **Format:** WebP
+- **Quality:** ~80% (aim for under 300 KB)
+
+Use [Squoosh](https://squoosh.app) to resize and convert. Do not commit full-resolution originals.
+
 ### Tags
 
 Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Common tags include: `rpl`, `ppl`, `cpl`, `atpl`, `raaus`, `casa`, `tif`, `gear`, `career`, `weather`, `navigation`, `aeroprakt`, `piper`, `cessna`.
@@ -91,7 +110,7 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 - The site is static-first. Most pages should be fully static with zero client-side JS.
 - React components are rendered as Astro islands using `client:load` or `client:visible` directives. Do not wrap entire pages in React.
 - Content collections are defined in `src/content.config.ts` with Zod schemas for type-safe frontmatter validation.
-- Images should use Astro's `<Image />` component for automatic optimisation.
+- Blog images are stored in `public/images/blog/` and referenced in frontmatter as `/images/blog/filename.webp`. They are served as-is from Netlify's CDN, so compress them before committing.
 
 ## Future scope (do not build yet, but design with these in mind)
 

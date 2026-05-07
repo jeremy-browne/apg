@@ -6,7 +6,7 @@ interface Props {
     alt?: string;
     wrapperClass?: string;
     imageClass?: string;
-    loading?: "lazy" | "eager";
+    loading?: "lazy" | "eager" | null;
     fetchpriority?: "high" | "low" | "auto";
     width?: number;
     height?: number;
@@ -19,13 +19,14 @@ const {
     alt = "",
     wrapperClass = "",
     imageClass = "",
-    loading = "lazy",
+    loading: loadingRaw = "lazy",
     fetchpriority,
     width,
     height,
     sizes,
 } = Astro.props;
 
+const loading = loadingRaw ?? "lazy";
 const fetchPriorityVal =
     loading === "eager" ? (fetchpriority ?? "high") : undefined;
 ---

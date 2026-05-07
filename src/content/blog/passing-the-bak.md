@@ -1,13 +1,13 @@
 ---
-draft: false
-featured: "2"
+draft: true
+featured: "none"
 authors:
   - APG
 title: Passing the BAK — Study Strategy That Worked for Me
 description: >-
   The Basic Aeronautical Knowledge exam does not have to be a slog. Here is the
   approach I used to get through it efficiently and first time.
-pubDate: 2025-02-03T08:00:00.000Z
+pubDate: 2026-02-03T08:00:00.000Z
 tags:
   - theory
   - BAK
