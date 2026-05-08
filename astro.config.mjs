@@ -13,7 +13,8 @@ import rehypeSlug from "rehype-slug";
 // https://astro.build/config
 export default defineConfig({
   adapter: netlify(),
-  site: "https://apg-aviation.netlify.app/",
+  site: "https://aussiepilotguide.com/",
+  security: { checkOrigin: false },
 
   fonts: [
     {
