@@ -25,12 +25,17 @@ npm run astro check  # TypeScript/Astro diagnostics
 ```
 src/
 ├── content/
-│   └── blog/         # Blog posts as .md/.mdx files
+│   ├── blog/          # Blog posts as .md/.mdx files
+│   └── authors/       # Author profiles as .md files (slug = filename)
 ├── components/        # Astro and React components
 │   ├── *.astro        # Static layout components
 │   └── *.tsx          # Interactive React islands (client:load / client:visible)
 ├── layouts/           # Page layouts
-├── pages/             # File-based routing
+├── pages/
+│   ├── authors/
+│   │   ├── index.astro    # SSR: redirects to solo author, or lists all authors
+│   │   └── [slug].astro   # Static: individual author profile + their posts
+│   └── ...            # Other file-based routes
 └── styles/            # Global styles
 public/                # Static assets (images, fonts, favicons)
 ```
@@ -47,12 +52,14 @@ title: "How to Become a Pilot in Australia"
 description: "A complete guide to pilot training pathways in Australia — RAAus, RPL, PPL, CPL and beyond."
 pubDate: 2026-04-25
 updatedDate: 2026-04-25
-author: "Jeremy Browne"
-category: "training-pathways"
+authors:
+  - "Jeremy Browne"
 tags: ["rpl", "ppl", "cpl", "casa", "raaus"]
 draft: false
 ---
 ```
+
+The `authors` field is an array of display-name strings. Each name must match an author profile in `src/content/authors/` — the filename is the slugified name (e.g. `"Jeremy Browne"` → `jeremy-browne.md`). If a name has no matching profile, the build logs a warning and the name renders as plain text instead of a link.
 
 ### Content categories
 
@@ -84,6 +91,33 @@ image:
 
 Use [Squoosh](https://squoosh.app) to resize and convert. Do not commit full-resolution originals.
 
+### Authors
+
+Author profiles live in `src/content/authors/` as Markdown files. The filename becomes the URL slug and must be the slugified form of the author's display name (`Jeremy Browne` → `jeremy-browne.md`).
+
+```yaml
+---
+name: "Jeremy Browne"
+role: "Commercial Pilot & Grade 3 Flight Instructor"  # optional
+image:                                                 # optional
+  src: /images/authors/jeremy-browne.webp
+  alt: Jeremy Browne
+---
+
+Bio text in Markdown...
+```
+
+**Routing behaviour:**
+- `/authors` — if one author exists, redirects to their profile; if multiple, shows a ranked list (most articles first). This page is SSR (not prerendered) so it always reflects the current author set without a cache-busting rebuild.
+- `/authors/[slug]` — static profile page with bio and a grid of the author's posts.
+
+**Adding a new author:**
+1. Create `src/content/authors/[slug].md` with the frontmatter above.
+2. Use the author's display name (matching the slug) in any blog post `authors` array.
+3. The build will automatically include them in the `/authors` list and generate their profile page.
+
+**Missing profile warning:** If a blog post names an author with no matching profile file, `npm run build` and `npm run dev` emit a console warning identifying the post and the expected file path. The author name renders as plain text (no broken link) until a profile is created.
+
 ### Tags
 
 Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Common tags include: `rpl`, `ppl`, `cpl`, `atpl`, `raaus`, `casa`, `tif`, `gear`, `career`, `weather`, `navigation`, `aeroprakt`, `piper`, `cessna`.
@@ -111,6 +145,7 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 - React components are rendered as Astro islands using `client:load` or `client:visible` directives. Do not wrap entire pages in React.
 - Content collections are defined in `src/content.config.ts` with Zod schemas for type-safe frontmatter validation.
 - Blog images are stored in `public/images/blog/` and referenced in frontmatter as `/images/blog/filename.webp`. They are served as-is from Netlify's CDN, so compress them before committing.
+- The site uses hybrid rendering: almost all pages are prerendered (static), but `src/pages/authors/index.astro` has `export const prerender = false` so author-count-dependent redirect logic is evaluated fresh on each request rather than being baked into the build.
 
 ## Future scope (do not build yet, but design with these in mind)
 

@@ -12,7 +12,10 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(npx --yes degit truedaniyyel/basic-blog ./ --force)",
       "Bash(npm install *)",
-      "WebFetch(domain:developers.kit.com)"
+      "WebFetch(domain:developers.kit.com)",
+      "Bash(npm run *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Code\\\\apg\\\\src\\\\content\\\\authors\\\\\" -File | Select-Object FullName)",
+      "Bash(Test-Path \"c:\\\\Code\\\\apg\\\\README.md\")"
     ]
   }
 }

@@ -70,9 +70,19 @@ const about = defineCollection({
   }),
 });
 
+const authors = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/authors" }),
+  schema: z.object({
+    name: z.string(),
+    role: z.string().optional(),
+    image: imageSchema.optional(),
+  }),
+});
+
 export const collections = {
   licenses,
   blog,
   legal,
   about,
+  authors,
 };

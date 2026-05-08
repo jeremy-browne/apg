@@ -1,0 +1,63 @@
+---
+export const prerender = false;
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/layouts/Container.astro";
+import PageTitle from "../../components/ui/PageTitle.astro";
+import Link from "../../components/ui/link/Link.astro";
+
+const authors = await getCollection("authors");
+
+if (authors.length === 1) {
+    return Astro.redirect(`/authors/${authors[0].id}`, 302);
+}
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+
+const slugifyName = (name: string) =>
+    name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+
+const authorsSorted = authors
+    .map((author) => {
+        const postCount = allPosts.filter((post) =>
+            post.data.authors.some((a) => slugifyName(a) === author.id),
+        ).length;
+        return { author, postCount };
+    })
+    .sort((a, b) => b.postCount - a.postCount);
+---
+
+<BaseLayout title="Authors" description="Meet the writers behind Aussie Pilot Guide.">
+    <Container class="py-12">
+        <PageTitle title="Authors" />
+
+        <ul class="mx-auto max-w-2xl space-y-6">
+            {
+                authorsSorted.map(({ author, postCount }) => (
+                    <li>
+                        <Link
+                            variant="plain"
+                            href={`/authors/${author.id}`}
+                            class="group flex items-center justify-between rounded-xl border border-neutral-200 px-6 py-4 transition-colors duration-200 hover:border-blue-500 dark:border-neutral-700 dark:hover:border-yellow-400"
+                        >
+                            <div>
+                                <p class="font-semibold group-hover:text-blue-500 dark:group-hover:text-yellow-400">
+                                    {author.data.name}
+                                </p>
+                                {author.data.role && (
+                                    <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
+                                        {author.data.role}
+                                    </p>
+                                )}
+                            </div>
+                            <span class="ml-4 shrink-0 text-sm text-gray-500 dark:text-gray-400">
+                                {postCount} {postCount === 1 ? "article" : "articles"}
+                            </span>
+                        </Link>
+                    </li>
+                ))
+            }
+        </ul>
+    </Container>
+</BaseLayout>

@@ -2,7 +2,7 @@
 draft: false
 featured: "2"
 authors:
-  - APG
+  - Jeremy Browne
 title: "RPL vs RPC in Australia: What's the Difference?"
 description: >-
   Two pathways, two regulators, one decision. Here is how the Recreational
@@ -18,7 +18,7 @@ tags:
   - RAAus
   - CASA
 image:
-  src: https://images.unsplash.com/photo-1474302770737-173ee21bab63?w=1600&q=80
+  src: /images/blog/arrowandjab.webp
   alt: Light single-engine training aircraft parked on a regional airstrip
 ---
 

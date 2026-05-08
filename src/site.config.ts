@@ -1,7 +1,7 @@
 export const SITE_SETTINGS = {
   title: "Aussie Pilot Guide",
   description:
-    "A pilot training blog covering Australian aviation — theory, training flights, exams, and life as a student pilot.",
+    "The Australian flight training blog we wish we'd had as a student. Honest takes on theory, lessons, exams, and life learning to fly.",
   owner: "APG",
   ogImages: "",
   socials: [] as { icon: string; label: string; url: string; handle: string }[],
@@ -29,6 +29,10 @@ export const footer = [
       {
         name: "About",
         url: "/about",
+      },
+      {
+        name: "Authors",
+        url: "/authors",
       },
       {
         name: "Search",
