@@ -38,10 +38,6 @@ export const footer = [
         name: "Search",
         url: "/search",
       },
-      {
-        name: "Contact",
-        url: "/contact",
-      },
     ],
   },
   {
@@ -54,6 +50,10 @@ export const footer = [
       {
         name: "Sitemap",
         url: "/sitemap-index.xml",
+      },
+            {
+        name: "Contact",
+        url: "/contact",
       },
     ],
   },
