@@ -93,6 +93,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             crossorigin="anonymous"></script>
 
         <script src="../utils/overlay.ts"></script>
+
+        <!-- Google Analytics -->
+        <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-SWHGXCSP5C"></script>
+        <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-SWHGXCSP5C');
+        </script>
     </head>
 
     <body
