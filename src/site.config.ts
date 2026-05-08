@@ -38,6 +38,10 @@ export const footer = [
         name: "Search",
         url: "/search",
       },
+      {
+        name: "Contact",
+        url: "/contact",
+      },
     ],
   },
   {
