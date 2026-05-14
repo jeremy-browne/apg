@@ -29,6 +29,7 @@
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
+    "remove-markdown": "^0.6.4",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3"
   },
