@@ -1,6 +1,5 @@
 ---
 draft: false
-featured: "2"
 authors:
   - Jeremy Browne
 title: "RPL vs RPC in Australia: What's the Difference?"
@@ -9,6 +8,7 @@ description: >-
   Pilot Licence and Recreational Pilot Certificate actually differ, and which
   one might suit your goals.
 pubDate: 2026-05-08T08:00:00.000Z
+updatedDate: 2026-05-14
 tags:
   - training
   - student pilot
@@ -24,11 +24,11 @@ image:
 
 If you are starting flight training in Australia, two terms come up almost immediately: **RPL** and **RPC**.
 
-They sound similar, both relate to recreational flying, and both can be valid starting points. They are different things, in different systems, with different rules.
+They sound similar, both relate to recreational flying, and both can be valid starting points. However, they are different things, in different systems, with different rules.
 
 The **RPL**, or **Recreational Pilot Licence**, is a CASA flight crew licence issued under CASR Part 61. The **RPC**, or **Recreational Pilot Certificate**, is issued through Recreational Aviation Australia (RAAus). Most of the practical differences flow from that one structural fact.
 
-This article is not about declaring a winner. It is about helping you work out which pathway suits your goals, your budget, and the schools near you.
+This article is not about declaring which option is best. It is about helping you work out which pathway suits your goals, your budget, and the schools near you.
 
 ## The short version
 
@@ -46,7 +46,7 @@ The classic RPC pathway covers Group A aircraft: single or two-seat, single-engi
 
 Aircraft are registered with RAAus numbers (24-XXXX, 19-XXXX, etc.). Training is delivered through RAAus flight schools, aero clubs, and recreational aviation organisations.
 
-The RPC suits you if your goals are recreational flying, low cost, lighter aircraft, or starting cheaply with the option of converting later. Hours flown in RAAus aircraft count toward CASA licences.
+The RPC suits you if your goals are recreational flying, low cost, lighter aircraft, or starting cheaply with the option of converting later. It's important to note that hours flown in RAAus aircraft count toward CASA licences. Even if you have a long term goal of getting your Commercial Pilot License (CPL), RAAus aircraft may provide you with a cheap and efficient avenue to build the required command time for the CPL.
 
 ## What is an RPL?
 
@@ -60,20 +60,19 @@ It suits you if you want to train in the CASA system, fly common GA aircraft lik
 
 ## Aircraft you can actually fly
 
-An RPC means flying RAAus-registered aircraft: typically two-seat, light, modern aeroplanes with Rotax 912 engines. Common types include the Aeroprakt A22 and A32 Vixxen, Jabiru, Sling 2, Bristell, and Tecnam variants.
+An RPC means flying RAAus-registered aircraft: typically two-seat, light, modern aeroplanes with efficent (thus, cheap) Rotax engines. Common types include the Aeroprakt A22 Foxbat and A32 Vixxen, Jabiru, Sling 2, Bristell, and Tecnam variants.
 
-An RPL is limited to single-engine VH-registered aircraft up to 1,500 kg MTOW. That covers the standard GA trainers: Cessna 152, Cessna 172, Piper Warrior, Piper Archer, Diamond DA40. Multi-engine flying requires a PPL with a multi-engine class rating.
+An RPL is limited to single-engine VH-registered aircraft up to 1,500 kg MTOW. That covers the standard GA trainers: Cessna 152, Cessna 172, Piper Warrior, Piper Archer.
 
-The aircraft your local schools operate may quietly decide this for you. If your nearest school flies RAAus aircraft, the RPC is the natural starting point. If they fly Cessnas and Pipers, the RPL is. Larger Victorian operators often offer both.
+The aircraft your local schools operate may decide this for you. If your nearest school flies RAAus aircraft, the RPC is the natural starting point. If they fly Cessnas and Pipers, the RPL is. Larger operators often offer both.
 
 ## Passengers
 
 Passenger rules are where simplified summaries online tend to mislead people. The actual rules depend on your endorsements and your medical, not just your licence.
 
-For an RPC, you do not get to carry a passenger automatically. RAAus requires a separate **Passenger Endorsement**, needing at least 10 hours pilot-in-command, 90-day take-off and landing recency, and a flight check. From the June 2025 RAAus syllabus update, there is also a dedicated Passenger exam. Because most Group A aircraft are two-seaters, the practical ceiling is one passenger.
+For an RPC, you do not get to carry a passenger automatically. RAAus requires a separate **Passenger Endorsement**, needing at least 10 hours pilot-in-command, 90-day take-off and landing recency, and a flight check. From the June 2025 RAAus syllabus update, there is also a dedicated Passenger exam. Because most Group A aircraft are two-seaters, the practical ceiling is one passenger. Most people include their passenger endorsement with their RPC flight test.
 
 For an RPL, the passenger rule is tied to the medical:
-
 - **Class 5 self-declaration or RAMPC**: one passenger maximum.
 - **Class 2 or higher**: more than one passenger, up to the aircraft's seating capacity.
 - **Class 5 or RAMPC, with another pilot in a control seat holding Class 2 or higher**: more than one passenger permitted.
@@ -84,11 +83,9 @@ So "the RPL holder can take more passengers" is only half true. They can, if the
 
 The two systems handle theory differently.
 
-RAAus theory is modular and delivered in-house at flight schools. Core exams cover Pre-Solo Air Legislation, Basic Aeronautical Knowledge, Human Factors, and Radio Operator. From the June 2025 syllabus, there is also a consolidated comprehensive exam plus the Passenger Endorsement exam. Cross-country adds a Flight Navigation written exam. Pass marks are 70%, and exams are usually free of invigilation fees because they are administered internally.
+RAAus theory is modular and delivered in-house at flight schools. Core exams cover Pre-Solo Air Legislation, Basic Aeronautical Knowledge, Human Factors, and Radio Operator knowledge. From the June 2025 syllabus, there is also a consolidated comprehensive exam plus the Passenger Endorsement exam. Cross-country adds a Flight Navigation written exam. Pass marks are 70%, and exams are usually free of invigilation fees because they are administered internally.
 
-The RPL theory is concentrated into one CASA exam called the RPLA. Two hours, 55 to 60 multiple-choice and numerical questions, 70% pass, around $190 per attempt through Aspeq. It covers basic aeronautical knowledge, aeroplane-specific knowledge, flight rules and air law, meteorology, and human factors all at once. Adding navigation requires a separate RPLN exam.
-
-The RAAus path spreads the load. The CASA path concentrates it.
+The RPL theory is concentrated into one CASA exam called the RPLA. Two hours, 55 to 60 multiple-choice and numerical questions, 70% pass, around $190 per attempt through Aspeq. It covers basic aeronautical knowledge, aeroplane-specific knowledge, flight rules and air law, meteorology, and human factors all at once. Adding navigation requires a separate RPLN exam. If you're looking at a navigation endorsement on your RPL, I'd recommend just doing the PPL theory exam instead, it will be more useful in the long run.
 
 ## Flying beyond the local area
 
@@ -102,13 +99,11 @@ If you intend to convert from RPC to RPL with navigation privileges, the gap mat
 
 ## Controlled airspace
 
-If you train at a country aerodrome like Lilydale, Tyabb, or Latrobe Valley, controlled airspace might rarely come up. If you train near a capital city, it will come up early.
+If you train at a country aerodrome, controlled airspace might rarely come up. If you train near a capital city, it will come up early.
 
 Controlled airspace access requires Flight Radio, Controlled Aerodrome, and Controlled Airspace endorsements, plus appropriate equipment (Mode C or S transponder, VHF radio).
 
-For an RPL pilot, those endorsements get added to the Part 61 licence and require a Class 2 or Basic Class 2 medical. CASA has signalled intent to enable CTA access for RAAus pilots through a standalone RAAus endorsement, which is still in implementation as of May 2026. The current practical route to controlled airspace in an RAAus aircraft is to also hold an RPL with the relevant CASA endorsements.
-
-If controlled airspace is part of the flying you want to do, talk to your school early.
+For an RPL pilot, those endorsements get added to the Part 61 licence and require a Class 2 or Basic Class 2 medical. CASA has signalled intent to enable CTA access for RAAus pilots through a standalone RAAus endorsement, which is still in implementation as of May 2026. The current practical route to controlled airspace in an RAAus aircraft is to also hold a minimum of an RPL with the relevant endorsements.
 
 ## Medical requirements
 
@@ -121,7 +116,7 @@ For an RPL, CASA offers four pathways:
 - **Basic Class 2**: any doctor using the unconditional Austroads commercial driver standard. Day VFR below 10,000 feet.
 - **Class 2**: issued by a CASA DAME. Required for full RPL passenger privileges and for night and instrument flying.
 
-This area has changed significantly since 2024. Class 5 has narrowed the gap between RAAus and CASA medical accessibility. If you are aiming at a commercial career, you need a Class 1, and you should organise that medical before spending serious money on training.
+This area has changed significantly since 2024. Class 5 has narrowed the gap between RAAus and CASA medical accessibility. If you are aiming at a commercial career, you need a Class 1, and you should organise that medical before spending serious money on training. Even if you don't use your Class 1 straight away, getting it done early will lower the risk of any medical suprises.
 
 ## Maintenance autonomy
 
@@ -183,7 +178,7 @@ Before committing:
 - If I continue toward a PPL or CPL, how much will count?
 - What are the common reasons students get delayed?
 
-The answers tell you about the pathway and the school in roughly equal measure.
+Their answers will tell you about the pathway and the school in roughly equal measure.
 
 ## Final thoughts
 

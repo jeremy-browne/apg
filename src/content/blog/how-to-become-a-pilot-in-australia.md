@@ -8,6 +8,7 @@ description: >-
   It is easy to get overwhelmed before you even begin. Here is where I would
   actually start if I were learning to fly in Australia today.
 pubDate: 2026-04-07T10:00:00.000Z
+updatedDate: 2026-05-14
 tags:
   - training
   - student pilot
@@ -40,7 +41,7 @@ If you love it, great. You've taken the first step. If you don't, that's also us
 
 Most flying schools offer some form of trial introductory flight. You'll go up with an instructor, sit in the pilot seat, and get to handle the controls for part of it.
 
-You don't need to know anything before you go. Aerodynamics, radio calls, airspace, aircraft systems, none of that is your problem on day one. The instructor will brief you. The whole point is to experience flying without pressure.
+You don't need to know anything before you go. Aerodynamics, radio calls, airspace, aircraft systems, none of that is your problem on day one. The instructor will brief you and direct you through the flight. The whole point is to experience flying without pressure.
 
 If you can, do it twice, at two different schools.
 
@@ -75,6 +76,8 @@ Either is a valid place to start. The right answer depends on what you want to f
 One pathway worth knowing about: plenty of students start with an RAAus RPC and convert to a CASA RPL later. CASA treats the RAAus pilot certificate as equivalent to an RPL, and your category rating, class rating, and design feature endorsements transfer across. Training in RAAus aircraft is often significantly cheaper per hour than training in VH-registered general aviation aircraft, so this route can save real money while still feeding into the CASA licensing system. It's a common, well-trodden path.
 
 If your long-term goal is commercial aviation, talk to schools early about how training credits across. CASA allows training operators to assess prior training and apply credit accordingly.
+
+See our extended article on the RPC vs the RPL [here](/blog/rpl-vs-rpc-in-australia)
 
 ## Integrated vs non-integrated training
 

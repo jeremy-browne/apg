@@ -15,7 +15,11 @@
       "WebFetch(domain:developers.kit.com)",
       "Bash(npm run *)",
       "Bash(Get-ChildItem -Path \"c:\\\\Code\\\\apg\\\\src\\\\content\\\\authors\\\\\" -File | Select-Object FullName)",
-      "Bash(Test-Path \"c:\\\\Code\\\\apg\\\\README.md\")"
+      "Bash(Test-Path \"c:\\\\Code\\\\apg\\\\README.md\")",
+      "Bash(python -c \"from PIL import Image; print\\('Pillow OK'\\)\")",
+      "WebFetch(domain:elevenlabs.io)",
+      "WebFetch(domain:api.elevenlabs.io)",
+      "Bash(npm uninstall *)"
     ]
   }
 }
