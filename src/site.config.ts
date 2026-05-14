@@ -4,7 +4,14 @@ export const SITE_SETTINGS = {
     "The Australian flight training blog we wish we'd had as a student pilot. Honest takes on theory, lessons, exams, and life learning to fly.",
   owner: "APG",
   ogImages: "",
-  socials: [] as { icon: string; label: string; url: string; handle: string }[],
+  socials: [
+    {
+      icon: "instagram",
+      label: "Instagram",
+      url: "https://www.instagram.com/aussiepilotguide/",
+      handle: "@aussiepilotguide",
+    },
+  ] as { icon: string; label: string; url: string; handle: string }[],
 };
 
 export const header = [
