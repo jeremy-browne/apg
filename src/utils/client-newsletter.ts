@@ -67,7 +67,7 @@ if (!form) {
 
         if (btn) {
           const oldText = btn.textContent;
-          btn.textContent = "Subscribed!";
+          btn.textContent = "Sent!";
           setTimeout(() => {
             btn.textContent = oldText;
           }, 3000);
