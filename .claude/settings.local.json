@@ -19,7 +19,14 @@
       "Bash(python -c \"from PIL import Image; print\\('Pillow OK'\\)\")",
       "WebFetch(domain:elevenlabs.io)",
       "WebFetch(domain:api.elevenlabs.io)",
-      "Bash(npm uninstall *)"
+      "Bash(npm uninstall *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Code\\\\apg\\\\src\" -Filter \"*site*\" -Recurse)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(dir \"c:\\\\Code\\\\apg\\\\src\\\\content\\\\blog\" /b)",
+      "Bash(dir \"c:\\\\Code\\\\apg\\\\src\\\\content\\\\about\" /b)",
+      "Bash(dir \"c:\\\\Code\\\\apg\\\\src\\\\pages\" /b /s)",
+      "Bash(dir \"c:\\\\Code\\\\apg\\\\src\\\\pages\\\\blog\" /b /s)",
+      "Bash(dir \"c:\\\\Code\\\\apg\\\\src\\\\pages\\\\authors\" /b /s)"
     ]
   }
 }
