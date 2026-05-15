@@ -33,9 +33,13 @@ const licenses = defineCollection({
 
 const baseSchema = z.object({
   draft: z.boolean().default(false),
+  canonical: z.boolean().default(false),
   featured: featuredSchema,
   title: z.string().min(1, { message: "Title cannot be empty." }),
   description: z.string().min(1, { message: "Description cannot be empty." }),
+  summary: z.string().optional(),
+  category: z.string().optional(),
+  priority: z.number().optional(),
   authors: z.array(z.string()).default([]),
   pubDate: z.coerce.date(),
   updatedDate: z.coerce.date().optional(),

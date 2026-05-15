@@ -1,5 +1,8 @@
 ---
 draft: false
+canonical: true
+category: training-pathways
+priority: 1
 featured: "1"
 authors:
   - Jeremy Browne
@@ -7,6 +10,10 @@ title: How to Become A Pilot in Australia
 description: >-
   It is easy to get overwhelmed before you even begin. Here is where I would
   actually start if I were learning to fly in Australia today.
+summary: >-
+  Answers where to start if you want to learn to fly in Australia, covering
+  licence options, school selection, and what to expect from the training
+  process.
 pubDate: 2026-04-07T10:00:00.000Z
 updatedDate: 2026-05-14
 tags:

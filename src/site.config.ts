@@ -58,6 +58,10 @@ export const footer = [
         name: "Sitemap",
         url: "/sitemap-index.xml",
       },
+      {
+        name: "LLMs",
+        url: "/llms.txt",
+      },
             {
         name: "Contact",
         url: "/contact",

@@ -1,6 +1,7 @@
 ---
 title: "Going flying VFR under Part 91: Equipment and Weather"
 description: "A practical walkthrough of what an Australian VFR pilot needs to go flying under CASR Part 91: medical, aircraft and equipment, weather minimums, and personal minimums."
+summary: "Covers what an Australian VFR pilot needs to legally go flying under CASR Part 91, including medical requirements, aircraft equipment, weather minima, and personal minima."
 pubDate: 2026-05-14
 updatedDate: 2026-05-14
 authors:
@@ -10,6 +11,9 @@ image:
     src: /images/blog/20260511_171912.webp
     alt: "A piper warrior flying during sunset"
 draft: false
+canonical: true
+category: operations
+priority: 1
 featured: "2"
 ---
 

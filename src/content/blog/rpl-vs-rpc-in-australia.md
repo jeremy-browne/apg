@@ -1,5 +1,8 @@
 ---
 draft: false
+canonical: true
+category: training-pathways
+priority: 2
 authors:
   - Jeremy Browne
 title: "RPL vs RPC in Australia: What's the Difference?"
@@ -7,6 +10,10 @@ description: >-
   Two pathways, two regulators, one decision. Here is how the Recreational
   Pilot Licence and Recreational Pilot Certificate actually differ, and which
   one might suit your goals.
+summary: >-
+  Explains the practical differences between the RPL and RPC, covering
+  regulatory body, cost, aircraft limitations, and which pathway suits
+  different flying goals.
 pubDate: 2026-05-08T08:00:00.000Z
 updatedDate: 2026-05-14
 tags:

@@ -15,12 +15,14 @@ interface Props {
     title: string;
     description?: string;
     ogImage?: string;
+    alternateLinks?: Array<{ type: string; href: string; title?: string }>;
 }
 
 const {
     title = SITE_SETTINGS.title,
     description = SITE_SETTINGS.description,
     ogImage = SITE_SETTINGS.ogImages,
+    alternateLinks,
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -72,6 +74,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             title="RSS"
             href="rss.xml"
         />
+        {alternateLinks?.map((link) => (
+            <link rel="alternate" type={link.type} href={link.href} title={link.title} />
+        ))}
 
         <script is:inline>
             try {

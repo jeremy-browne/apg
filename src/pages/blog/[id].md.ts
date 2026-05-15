@@ -25,6 +25,6 @@ export const GET: APIRoute = ({ props, site }) => {
   if (post.body) lines.push(post.body);
 
   return new Response(lines.join("\n"), {
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
+    headers: { "Content-Type": "text/markdown; charset=utf-8" },
   });
 };
