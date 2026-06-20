@@ -1,5 +1,6 @@
 ---
 import OptimizedImage from "../ui/OptimizedImage.astro";
+import { mediaUrl } from "../../utils/media";
 import type { ContentEntry, ImageLoading, WithMeta } from "../../types";
 import FeaturedTag from "./FeaturedTag.astro";
 import FormattedDate from "./FormattedDate.astro";
@@ -27,14 +28,15 @@ const { readingTimeText } = meta || {};
 
 const displayDate = updatedAt ?? publishedAt ?? undefined;
 const postSlug = slug ?? id;
+const featuredSrc = mediaUrl(featured_image);
 ---
 
 <article class="group relative flex flex-col">
     {featured && <FeaturedTag class="absolute top-1 left-1 z-10" />}
 
-    {featured_image?.src ? (
+    {featuredSrc ? (
         <OptimizedImage
-            src={featured_image.src}
+            src={featuredSrc}
             alt={featured_image.alt ?? ""}
             width={1600}
             height={900}

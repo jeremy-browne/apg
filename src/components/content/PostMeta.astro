@@ -6,6 +6,7 @@ import Series from "./Series.astro";
 import OptimizedImage from "../ui/OptimizedImage.astro";
 import Tooltip from "../ui/Tooltip.astro";
 import { formatDate } from "../../utils/formatDate";
+import { mediaUrl } from "../../utils/media";
 import { Icon } from "astro-icon/components";
 import type { ContentEntry, ImageLoading, WithMeta } from "../../types";
 import { SITE_SETTINGS } from "../../site.config";
@@ -98,9 +99,9 @@ const resolvedAuthors = ((bylines ?? []).length > 0
 
     {series && <Series {series} class="mt-6" />}
 
-    {featured_image?.src && (
+    {mediaUrl(featured_image) && (
         <OptimizedImage
-            src={featured_image.src}
+            src={mediaUrl(featured_image)}
             alt={featured_image.alt ?? ""}
             {loading}
             {fetchpriority}

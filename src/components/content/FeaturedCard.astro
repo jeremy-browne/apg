@@ -1,5 +1,6 @@
 ---
 import OptimizedImage from "../ui/OptimizedImage.astro";
+import { mediaUrl } from "../../utils/media";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ContentEntry } from "../../types";
 
@@ -68,7 +69,7 @@ const postSlug = slug ?? id;
     class={`${card({ size })} card-hover-effect card-size-${size}`}
 >
     <OptimizedImage
-        src={featured_image?.src ?? ""}
+        src={mediaUrl(featured_image) ?? ""}
         alt={featured_image?.alt ?? ""}
         width={1600}
         height={900}
