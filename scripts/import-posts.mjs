@@ -45,6 +45,13 @@ const MIME = { webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg", png: "
 const bylineCache = new Map();
 const termCache = new Map(); // `${taxonomy}:${slug}` -> termId
 
+// Ensure the custom `featured` field (homepage pin order) exists on posts.
+if (!dryRun) {
+  try {
+    await client.createField("posts", { slug: "featured", type: "number", label: "Featured", required: false });
+  } catch { /* already exists */ }
+}
+
 // Existing posts (slug -> id) so re-runs don't duplicate but still backfill terms.
 const existing = new Map();
 if (!dryRun) {
@@ -88,6 +95,8 @@ for (const file of files) {
         if (id) bylines.push({ bylineId: id });
         else console.warn(`  ⚠ ${slug}: byline "${name}" could not be resolved.`);
       }
+
+      if (fm.featured != null) data.featured = Number(fm.featured);
 
       const input = { data, slug };
       if (fm.pubDate) input.publishedAt = toIso(fm.pubDate);
