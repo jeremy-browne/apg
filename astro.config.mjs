@@ -15,6 +15,13 @@ import { sqlite } from "emdash/db";
 
 const isDev = process.argv.some((arg) => arg === "dev");
 
+// Canonical public origin. Drives Astro's `site` and emdash's `siteUrl`,
+// which in turn defines the WebAuthn rpId for admin passkeys. Override at
+// build time for non-production origins (e.g. a *.workers.dev preview) so
+// passkeys work there — the rpId must match the origin the browser is on:
+//   EMDASH_SITE_URL=https://<preview-host> npm run build
+const siteUrl = process.env.EMDASH_SITE_URL ?? "https://aussiepilotguide.com";
+
 // https://astro.build/config
 export default defineConfig({
     output: "server",
@@ -22,7 +29,7 @@ export default defineConfig({
     // In dev, using it triggers @cloudflare/vite-plugin's Workers SSR environment,
     // which breaks virtual modules (e.g. virtual:astro-icon) via fetchModule.
     adapter: isDev ? undefined : cloudflare(),
-    site: "https://aussiepilotguide.com/",
+    site: siteUrl,
 
     fonts: [
       {
@@ -60,7 +67,7 @@ export default defineConfig({
     integrations: [
       react(),
       emdash({
-        siteUrl: "https://aussiepilotguide.com",
+        siteUrl,
         database: isDev
           ? sqlite({ url: "file:./emdash.db" })
           : d1({ binding: "DB" }),
