@@ -114,5 +114,3 @@ Pick the pathway that matches where you want to be, not the shiniest aeroplane. 
 - CASA, [About certification for flight training operators (Part 141 and 142)](https://www.casa.gov.au/licences-and-certificates/air-operators/flight-training-operators/about-certification-flight-training-operators)
 - RAAus, [Learn to fly](https://www.raaus.com.au)
 - AOPA Australia, [Selecting a flight school](https://aopa.com.au/learn-to-fly/selecting-a-flight-school/)
-</content>
-</invoke>

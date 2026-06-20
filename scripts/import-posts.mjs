@@ -149,12 +149,18 @@ if (failed > 0) process.exit(1);
 // literal "| a | b |" paragraphs). Split the body around tables: pass prose
 // runs through markdownToPortableText, and convert tables to emdash `table`
 // blocks (rendered by emdash/ui's Table.astro).
+// emdash's markdownToPortableText only treats `_text_` as italic, not `*text*`.
+// Convert lone single-asterisk emphasis to underscores, leaving `**bold**` intact.
+function normalizeItalics(md) {
+  return md.replace(/(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)/g, "_$1_");
+}
+
 function mdToBlocks(md) {
   const lines = md.split(/\r?\n/);
   const blocks = [];
   let buffer = [];
   const flush = () => {
-    if (buffer.join("").trim()) blocks.push(...markdownToPortableText(buffer.join("\n")));
+    if (buffer.join("").trim()) blocks.push(...markdownToPortableText(normalizeItalics(buffer.join("\n"))));
     buffer = [];
   };
   for (let i = 0; i < lines.length; i++) {
@@ -196,7 +202,7 @@ function ptKey() {
 // Reuse emdash's inline parser for cell content (bold, links, code) by running
 // the cell text through markdownToPortableText and lifting the spans/markDefs.
 function cellContent(text) {
-  const blk = markdownToPortableText(String(text).trim())[0];
+  const blk = markdownToPortableText(normalizeItalics(String(text).trim()))[0];
   return {
     content: blk?.children ?? [{ _type: "span", _key: ptKey(), text: String(text).trim(), marks: [] }],
     markDefs: blk?.markDefs ?? [],
