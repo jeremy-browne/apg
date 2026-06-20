@@ -98,5 +98,14 @@ export default defineConfig({
 
     vite: {
       plugins: [tailwindcss()],
+      ssr: {
+        // @astrojs/react's server entry statically imports the virtual module
+        // `astro:react:opts`. In dev we run without the Cloudflare adapter, and
+        // emdash's integration narrows ssr.noExternal, which leaves the React
+        // renderer externalized — so Node's ESM loader (not Vite) loads it and
+        // dies on the `astro:` scheme. Bundling it through Vite resolves the
+        // virtual module. Harmless in production.
+        noExternal: ["@astrojs/react"],
+      },
     },
 });
