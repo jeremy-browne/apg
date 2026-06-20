@@ -23,7 +23,7 @@ export const GET: APIRoute = async ({ params, site }) => {
     lines.push(`Authors: ${entry.data.bylines.map((c) => c.byline.displayName).join(", ")}`);
   }
   lines.push("");
-  if (entry.data.description) lines.push(entry.data.description);
+  if (entry.data.excerpt) lines.push(entry.data.excerpt);
   lines.push("");
   if (entry.data.content) lines.push(extractPlainText(entry.data.content));
 

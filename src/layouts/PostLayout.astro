@@ -27,7 +27,7 @@ const nextPost = allPosts[postIndex - 1] ? { ...allPosts[postIndex - 1], meta: {
 
 <BaseLayout
     title={entry.data.title}
-    description={entry.data.description}
+    description={entry.data.excerpt}
     alternateLinks={[{ type: "text/markdown", href: `/blog/${slug}.md`, title: `${entry.data.title} (Markdown)` }]}
 >
     <MediumZoom />
