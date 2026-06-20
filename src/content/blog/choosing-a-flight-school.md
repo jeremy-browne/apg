@@ -25,7 +25,7 @@ tags:
   - training
   - licence-pathways
 image:
-  src: /images/blog/choosing-a-flight-school.jpg
+  src: /images/blog/choosing-a-flight-school.webp
   alt: Light training aircraft on the apron at an Australian flight school
 ---
 

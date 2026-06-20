@@ -2,7 +2,7 @@
 
 An Australian flight training blog helping student pilots navigate their training journey — from first flight to first job.
 
-Built with [Astro](https://astro.build), [Tailwind CSS](https://tailwindcss.com), and deployed on [Netlify](https://netlify.com).
+Built with [Astro](https://astro.build), [Tailwind CSS](https://tailwindcss.com), and deployed on [Cloudflare Workers](https://workers.cloudflare.com).
 
 ## Getting started
 
@@ -69,7 +69,7 @@ Blog images go in `public/images/blog/`. Specs before committing:
 - **Format:** WebP
 - **Quality:** ~80% (under 300 KB)
 
-Use [Squoosh](https://squoosh.app) to convert. Do not commit full-resolution originals.
+Run `npm run optimise:image -- <input-path> [output-basename]` to convert to a spec-compliant WebP. Do not commit full-resolution originals.
 
 ## Configuration
 

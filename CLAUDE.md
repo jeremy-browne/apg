@@ -8,7 +8,7 @@ An Australian flight training blog and resource site helping student pilots navi
 - **Content:** Markdown/MDX in `src/content/`
 - **Styling:** Tailwind CSS
 - **Interactive components:** React (used sparingly via Astro islands, only where interactivity is needed)
-- **Deployment:** Netlify
+- **Deployment:** Cloudflare Workers (via `@astrojs/cloudflare`)
 - **Package manager:** npm
 
 ## Commands
@@ -89,7 +89,7 @@ image:
 - **Format:** WebP
 - **Quality:** ~80% (aim for under 300 KB)
 
-Use [Squoosh](https://squoosh.app) to resize and convert. Do not commit full-resolution originals.
+Run `npm run optimise:image -- <input-path> [output-basename]` to crop to 16:9, resize to 1600×900, and write a WebP into `public/images/blog/`. Do not commit full-resolution originals.
 
 ### Authors
 
@@ -144,7 +144,7 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 - The site is static-first. Most pages should be fully static with zero client-side JS.
 - React components are rendered as Astro islands using `client:load` or `client:visible` directives. Do not wrap entire pages in React.
 - Content collections are defined in `src/content.config.ts` with Zod schemas for type-safe frontmatter validation.
-- Blog images are stored in `public/images/blog/` and referenced in frontmatter as `/images/blog/filename.webp`. They are served as-is from Netlify's CDN, so compress them before committing.
+- Blog images are stored in `public/images/blog/` and referenced in frontmatter as `/images/blog/filename.webp`. They are served as-is from Cloudflare's CDN, so compress them before committing.
 - The site uses hybrid rendering: almost all pages are prerendered (static), but `src/pages/authors/index.astro` has `export const prerender = false` so author-count-dependent redirect logic is evaluated fresh on each request rather than being baked into the build.
 
 ## Future scope (do not build yet, but design with these in mind)
