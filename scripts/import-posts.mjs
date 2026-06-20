@@ -145,22 +145,26 @@ if (failed > 0) process.exit(1);
 
 // ---- markdown -> PortableText (table-aware) ----
 
-// emdash's markdownToPortableText has no GFM table support (it turns rows into
-// literal "| a | b |" paragraphs). Split the body around tables: pass prose
-// runs through markdownToPortableText, and convert tables to emdash `table`
-// blocks (rendered by emdash/ui's Table.astro).
-// emdash's markdownToPortableText only treats `_text_` as italic, not `*text*`.
-// Convert lone single-asterisk emphasis to underscores, leaving `**bold**` intact.
-function normalizeItalics(md) {
-  return md.replace(/(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)/g, "_$1_");
+// emdash's markdownToPortableText handles only a subset of markdown and no
+// inline HTML. Normalise the gaps before conversion:
+//   - inline <a href="url" ...>text</a>  ->  [text](url) (emdash ignores raw HTML)
+//   - lone *italic*  ->  _italic_ (emdash only treats _text_ as italic, not *text*)
+function normalizeMarkdown(md) {
+  return md
+    .replace(/<a\b[^>]*?href="([^"]+)"[^>]*>(.*?)<\/a>/gis, "[$2]($1)")
+    .replace(/(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)/g, "_$1_");
 }
 
+// emdash's markdownToPortableText has no GFM table support (it turns rows into
+// literal "| a | b |" paragraphs). Split the body around tables: pass prose
+// runs through normalizeMarkdown + markdownToPortableText, and convert tables to
+// emdash `table` blocks (rendered by emdash/ui's Table.astro).
 function mdToBlocks(md) {
   const lines = md.split(/\r?\n/);
   const blocks = [];
   let buffer = [];
   const flush = () => {
-    if (buffer.join("").trim()) blocks.push(...markdownToPortableText(normalizeItalics(buffer.join("\n"))));
+    if (buffer.join("").trim()) blocks.push(...markdownToPortableText(normalizeMarkdown(buffer.join("\n"))));
     buffer = [];
   };
   for (let i = 0; i < lines.length; i++) {
@@ -202,7 +206,7 @@ function ptKey() {
 // Reuse emdash's inline parser for cell content (bold, links, code) by running
 // the cell text through markdownToPortableText and lifting the spans/markDefs.
 function cellContent(text) {
-  const blk = markdownToPortableText(normalizeItalics(String(text).trim()))[0];
+  const blk = markdownToPortableText(normalizeMarkdown(String(text).trim()))[0];
   return {
     content: blk?.children ?? [{ _type: "span", _key: ptKey(), text: String(text).trim(), marks: [] }],
     markDefs: blk?.markDefs ?? [],
