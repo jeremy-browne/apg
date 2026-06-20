@@ -2,6 +2,9 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "aussie-pilot-guide",
 	"main": "./src/worker.ts",
+	// Keep the *.workers.dev URL available during/after cutover as a fallback
+	// and verification surface (canonical URLs still point to the apex).
+	"workers_dev": true,
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": [
 		"nodejs_compat"
