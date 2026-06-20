@@ -33,6 +33,7 @@ const dir = args.dir ?? "src/content/blog";
 const publicDir = args.public ?? "public";
 const dryRun = Boolean(args["dry-run"]);
 const asDraft = Boolean(args.draft);
+const refresh = Boolean(args.refresh); // re-convert + update content (and featured) on existing posts
 
 if (!baseUrl || (!token && !dryRun)) {
   console.error("Usage: node scripts/import-posts.mjs --url <instance> --token <ec_pat_...> [--dry-run] [--draft]");
@@ -82,7 +83,7 @@ for (const file of files) {
       const data = {
         title: fm.title ?? slug,
         excerpt: fm.description ?? fm.summary ?? "",
-        content: markdownToPortableText(body.trim()),
+        content: mdToBlocks(body.trim()),
       };
       const imgSrc = fm.image?.src;
       if (imgSrc) {
@@ -107,6 +108,15 @@ for (const file of files) {
       postId = item.id;
       console.log(`✓ created posts/${slug} (id ${postId}${asDraft || fm.draft ? ", draft" : ", published"})`);
       created++;
+    } else if (postId && refresh && !dryRun) {
+      // ---- refresh body content (and featured) on an existing post ----
+      const cur = await client.get("posts", postId);
+      const data = { ...cur.data, content: mdToBlocks(body.trim()) };
+      if (fm.featured != null) data.featured = Number(fm.featured);
+      await client.update("posts", postId, { data, _rev: cur._rev });
+      if (!asDraft && !fm.draft) await client.publish("posts", postId);
+      console.log(`↻ refreshed posts/${slug}`);
+      updated++;
     } else if (postId) {
       updated++;
     }
@@ -132,6 +142,82 @@ for (const file of files) {
 
 console.log(`\nDone. ${created} created, ${updated} updated, ${failed} failed${dryRun ? " (dry-run)" : ""}.`);
 if (failed > 0) process.exit(1);
+
+// ---- markdown -> PortableText (table-aware) ----
+
+// emdash's markdownToPortableText has no GFM table support (it turns rows into
+// literal "| a | b |" paragraphs). Split the body around tables: pass prose
+// runs through markdownToPortableText, and convert tables to emdash `table`
+// blocks (rendered by emdash/ui's Table.astro).
+function mdToBlocks(md) {
+  const lines = md.split(/\r?\n/);
+  const blocks = [];
+  let buffer = [];
+  const flush = () => {
+    if (buffer.join("").trim()) blocks.push(...markdownToPortableText(buffer.join("\n")));
+    buffer = [];
+  };
+  for (let i = 0; i < lines.length; i++) {
+    if (isTableRow(lines[i]) && !isSeparatorRow(lines[i]) && isSeparatorRow(lines[i + 1] ?? "")) {
+      flush();
+      const tableLines = [lines[i], lines[i + 1]];
+      let j = i + 2;
+      while (j < lines.length && isTableRow(lines[j])) tableLines.push(lines[j++]);
+      blocks.push(buildTableBlock(tableLines));
+      i = j - 1;
+    } else {
+      buffer.push(lines[i]);
+    }
+  }
+  flush();
+  return blocks;
+}
+
+function splitRowCells(line) {
+  let s = line.trim();
+  if (s.startsWith("|")) s = s.slice(1);
+  if (s.endsWith("|")) s = s.slice(0, -1);
+  return s.split("|").map((c) => c.trim());
+}
+function isTableRow(line) {
+  return typeof line === "string" && line.includes("|") && line.trim().length > 0;
+}
+function isSeparatorRow(line) {
+  if (!isTableRow(line) || !line.includes("-")) return false;
+  return splitRowCells(line).every((c) => /^:?-+:?$/.test(c));
+}
+
+// Function declaration (hoisted) so the top-level await loop can call it
+// before this point in the module without hitting a TDZ error.
+function ptKey() {
+  return `t${Math.random().toString(36).slice(2, 10)}`;
+}
+
+// Reuse emdash's inline parser for cell content (bold, links, code) by running
+// the cell text through markdownToPortableText and lifting the spans/markDefs.
+function cellContent(text) {
+  const blk = markdownToPortableText(String(text).trim())[0];
+  return {
+    content: blk?.children ?? [{ _type: "span", _key: ptKey(), text: String(text).trim(), marks: [] }],
+    markDefs: blk?.markDefs ?? [],
+  };
+}
+function makeRow(cells, isHeader) {
+  return {
+    _type: "tableRow",
+    _key: ptKey(),
+    cells: cells.map((text) => {
+      const { content, markDefs } = cellContent(text);
+      return { _type: "tableCell", _key: ptKey(), isHeader, content, markDefs };
+    }),
+  };
+}
+function buildTableBlock(tableLines) {
+  const header = splitRowCells(tableLines[0]);
+  const bodyLines = tableLines.slice(2); // skip header + separator
+  const rows = [makeRow(header, true), ...bodyLines.map((l) => makeRow(splitRowCells(l), false))];
+  return { _type: "table", _key: ptKey(), hasHeaderRow: true, rows };
+}
 
 // ---- helpers ----
 
