@@ -26,5 +26,12 @@
 			"binding": "SESSION",
 			"id": "1d3509b8d5df41c58a40f059a295c150"
 		}
+	],
+	// Production custom domain. The zone is already on Cloudflare, so
+	// custom_domain auto-provisions the DNS record + TLS cert on deploy.
+	// (The existing aussiepilotguide.com record pointing at Netlify must be
+	// removed first if it conflicts.)
+	"routes": [
+		{ "pattern": "aussiepilotguide.com", "custom_domain": true }
 	]
 }
