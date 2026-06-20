@@ -1,6 +1,7 @@
 import { ActionError, defineAction } from "astro:actions";
 import { z } from "astro:schema";
 import { createToken } from "../utils/newsletterToken";
+import { readEnv } from "../utils/env";
 
 async function verifyTurnstile(token: string, secret: string): Promise<boolean> {
     const res = await fetch(
@@ -58,9 +59,9 @@ export const server = {
             message: z.string().min(1).max(5000),
             "cf-turnstile-response": z.string().optional(),
         }),
-        handler: async (input) => {
-            const turnstileSecret = import.meta.env.TURNSTILE_SECRET_KEY;
-            const resendApiKey = import.meta.env.RESEND_API_KEY;
+        handler: async (input, context) => {
+            const turnstileSecret = readEnv(context.locals, "TURNSTILE_SECRET_KEY");
+            const resendApiKey = readEnv(context.locals, "RESEND_API_KEY");
 
             if (turnstileSecret) {
                 const token = input["cf-turnstile-response"];
@@ -100,7 +101,7 @@ export const server = {
                 await sendResendEmail({
                     apiKey: resendApiKey,
                     to: "jeremybrowne1991@gmail.com",
-                    from: "Aussie Pilot Guide <onboarding@resend.dev>",
+                    from: "Aussie Pilot Guide <hello@aussiepilotguide.com>",
                     replyTo: input.email,
                     subject: `New message from ${input.name}`,
                     html: `<p><strong>Name:</strong> ${input.name}</p><p><strong>Email:</strong> ${input.email}</p><p><strong>Message:</strong></p><p>${input.message.replace(/\n/g, "<br>")}</p>`,
@@ -125,9 +126,9 @@ export const server = {
             "cf-turnstile-response": z.string().optional(),
         }),
         handler: async (input, context) => {
-            const turnstileSecret = import.meta.env.TURNSTILE_SECRET_KEY;
-            const resendApiKey = import.meta.env.RESEND_API_KEY;
-            const newsletterSecret = import.meta.env.NEWSLETTER_SECRET;
+            const turnstileSecret = readEnv(context.locals, "TURNSTILE_SECRET_KEY");
+            const resendApiKey = readEnv(context.locals, "RESEND_API_KEY");
+            const newsletterSecret = readEnv(context.locals, "NEWSLETTER_SECRET");
 
             if (turnstileSecret) {
                 const token = input["cf-turnstile-response"];

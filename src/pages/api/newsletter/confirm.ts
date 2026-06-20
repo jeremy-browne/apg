@@ -2,12 +2,13 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { verifyToken } from "../../../utils/newsletterToken";
+import { readEnv } from "../../../utils/env";
 
-export const GET: APIRoute = async ({ url, redirect }) => {
+export const GET: APIRoute = async ({ url, redirect, locals }) => {
     const token = url.searchParams.get("token");
-    const secret = import.meta.env.NEWSLETTER_SECRET as string | undefined;
-    const resendApiKey = import.meta.env.RESEND_API_KEY as string | undefined;
-    const audienceId = import.meta.env.RESEND_AUDIENCE_ID as string | undefined;
+    const secret = readEnv(locals, "NEWSLETTER_SECRET");
+    const resendApiKey = readEnv(locals, "RESEND_API_KEY");
+    const audienceId = readEnv(locals, "RESEND_AUDIENCE_ID");
 
     if (!token || !secret || !resendApiKey || !audienceId) {
         console.error("[newsletter/confirm] missing env vars — token:", !!token, "secret:", !!secret, "apiKey:", !!resendApiKey, "audienceId:", !!audienceId);
