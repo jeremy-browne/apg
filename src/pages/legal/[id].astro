@@ -1,20 +1,14 @@
 ---
-import { getCollection, render } from "astro:content";
+import { getEntry, render } from "astro:content";
 import Article from "../../components/content/Article.astro";
 import FormattedDate from "../../components/content/FormattedDate.astro";
 import Prose from "../../components/content/Prose.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-export async function getStaticPaths() {
-    const legal = await getCollection("legal");
+const { id } = Astro.params;
+const docs = await getEntry("legal", id!);
 
-    return legal.map((docs) => ({
-        params: { id: docs.id },
-        props: { docs },
-    }));
-}
-
-const { docs } = Astro.props;
+if (!docs) return Astro.redirect("/404");
 
 const { Content } = await render(docs);
 

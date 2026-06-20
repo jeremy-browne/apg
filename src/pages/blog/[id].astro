@@ -1,18 +1,14 @@
 ---
-import { getCollection } from "astro:content";
+import { getEmDashEntry } from "emdash";
 import PostLayout from "../../layouts/PostLayout.astro";
 import { attachMeta } from "../../utils/meta";
 
-export async function getStaticPaths() {
-    const posts = await getCollection("blog", ({ data }) => !data.draft);
+const { id } = Astro.params;
+const { entry, error } = await getEmDashEntry("posts", id!);
 
-    return posts.map((post) => ({
-        params: { id: post.id },
-        props: { post: attachMeta(post) },
-    }));
-}
+if (!entry || error) return Astro.redirect("/404");
 
-const { post } = Astro.props;
+const post = attachMeta(entry);
 ---
 
 <PostLayout entry={post} />

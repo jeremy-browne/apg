@@ -1,10 +1,8 @@
 ---
-import { getCollection, getEntry } from "astro:content";
+import { getCollection } from "astro:content";
 import FeaturedTag from "./FeaturedTag.astro";
 import FormattedDate from "./FormattedDate.astro";
-import PostCopyright from "./PostCopyright.astro";
 import Series from "./Series.astro";
-import Tags from "./Tags.astro";
 import OptimizedImage from "../ui/OptimizedImage.astro";
 import Tooltip from "../ui/Tooltip.astro";
 import { formatDate } from "../../utils/formatDate";
@@ -21,39 +19,26 @@ interface Props {
 const { entry, loading = "eager", fetchpriority = "high" } = Astro.props;
 
 const { data, meta } = entry;
-const { title, pubDate, updatedDate, authors, featured, image, series, tags } =
-    data;
+const { title, publishedAt, updatedAt, bylines, featured, featured_image, series } = data;
 const { readingTimeText } = meta || {};
-
-const license = data.license ? await getEntry(data.license) : undefined;
 
 const knownAuthorIds = new Set(
     (await getCollection("authors")).map((a) => a.id),
 );
 
-const slugifyName = (name: string) =>
-    name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-
-const resolvedAuthors = (authors.length > 0 ? authors : [SITE_SETTINGS.owner]).map(
-    (name) => {
-        const slug = slugifyName(name);
-        const hasProfile = knownAuthorIds.has(slug);
-        if (!hasProfile) {
-            console.warn(
-                `[authors] Post "${entry.id}" references author "${name}" but no profile found at src/content/authors/${slug}.md`,
-            );
-        }
-        return { name, slug, hasProfile };
-    },
-);
-
+const resolvedAuthors = ((bylines ?? []).length > 0
+    ? (bylines ?? []).map((credit) => ({
+          name: credit.byline.displayName,
+          slug: credit.byline.slug,
+          hasProfile: knownAuthorIds.has(credit.byline.slug),
+      }))
+    : [{ name: SITE_SETTINGS.owner, slug: "", hasProfile: false }]);
 ---
 
 <header class="mb-12">
     {featured && <FeaturedTag />}
 
     <h1
-        data-pagefind-meta="title"
         class="mb-6 text-4xl font-bold sm:text-5xl sm:leading-snug"
     >
         {title}
@@ -85,18 +70,18 @@ const resolvedAuthors = (authors.length > 0 ? authors : [SITE_SETTINGS.owner]).m
         <div class="flex items-center gap-2">
             <Icon name="lucide:calendar" class="size-5" />
             {
-                updatedDate ? (
+                updatedAt && publishedAt && updatedAt.valueOf() !== publishedAt.valueOf() ? (
                     <Tooltip
                         id={`pubdate-${entry.id}`}
-                        label={`Published: ${formatDate(pubDate)}`}
+                        label={`Published: ${formatDate(publishedAt)}`}
                     >
                         <span class="cursor-help border-b border-dashed border-current">
-                            Updated: <FormattedDate date={updatedDate} />
+                            Updated: <FormattedDate date={updatedAt} />
                         </span>
                     </Tooltip>
                 ) : (
                     <span>
-                        <FormattedDate date={pubDate} />
+                        {publishedAt && <FormattedDate date={publishedAt} />}
                     </span>
                 )
             }
@@ -109,19 +94,14 @@ const resolvedAuthors = (authors.length > 0 ? authors : [SITE_SETTINGS.owner]).m
                 )
             }
         </div>
-
-        {license && <PostCopyright {license} />}
     </div>
 
     {series && <Series {series} class="mt-6" />}
-    {tags.length > 0 && <Tags {tags} class="mt-6" />}
 
-
-    {image && (
+    {featured_image?.src && (
         <OptimizedImage
-            data-pagefind-meta="image[src], image_alt[alt]"
-            src={image.src}
-            alt={image.alt}
+            src={featured_image.src}
+            alt={featured_image.alt ?? ""}
             {loading}
             {fetchpriority}
             wrapperClass="mt-6 aspect-video rounded-xl"

@@ -1,17 +1,18 @@
+import type { ContentEntry as EmDashEntry } from "emdash";
 import type { CollectionEntry } from "astro:content";
+import type { Post } from "../emdash-env";
 
 export type SiteSettings = {};
 
-export type ContentEntry = CollectionEntry<"blog">;
+export type ContentEntry = EmDashEntry<Post>;
 
 export type AllContentEntry =
-  | CollectionEntry<"blog">
+  | EmDashEntry<Post>
   | CollectionEntry<"legal">;
 
-export type ContentCollections = "blog" | "legal";
+export type ContentCollections = "posts" | "legal";
 
 export interface PostMeta {
-  plainText: string;
   readingTimeText: string;
 }
 

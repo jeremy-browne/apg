@@ -14,7 +14,6 @@ const { series, class: cls = "" } = Astro.props;
     <Icon name="lucide:link" class="text-gray-700 dark:text-gray-300" />
     <!-- href={`/search?series=${encodeURIComponent(series)}`} -->
     <span
-        data-pagefind-filter="series"
         class="relative inline-block active:scale-95 text-sm font-medium underline underline-offset-4"
     >
         {series}

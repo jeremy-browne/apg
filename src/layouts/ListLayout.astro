@@ -15,8 +15,6 @@ interface Props {
 }
 
 const { title, description = "", entries, ogImage } = Astro.props;
-
-const collection = entries[0]?.collection;
 ---
 
 <BaseLayout {title} {description} {ogImage}>
@@ -27,7 +25,7 @@ const collection = entries[0]?.collection;
             entries.length === 0 ? (
                 <EmptyState
                     title="Nothing here yet..."
-                    message={`Check back soon for new ${collection === "blog" ? "posts" : "projects"}!`}
+                    message="Check back soon for new posts!"
                 />
             ) : (
                 <div class="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">

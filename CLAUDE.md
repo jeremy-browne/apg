@@ -4,11 +4,12 @@ An Australian flight training blog and resource site helping student pilots navi
 
 ## Tech stack
 
-- **Framework:** Astro (content-first, static by default)
-- **Content:** Markdown/MDX in `src/content/`
+- **Framework:** Astro (server-rendered, `output: "server"`)
+- **Blog content:** [emdash](https://emdashcms.com) CMS — served live from Cloudflare D1 (prod) / local `emdash.db` (dev), not from files
+- **Other content:** Markdown in `src/content/` for `authors`, `legal`, `about` (file-based collections)
 - **Styling:** Tailwind CSS
 - **Interactive components:** React (used sparingly via Astro islands, only where interactivity is needed)
-- **Deployment:** Cloudflare Workers (via `@astrojs/cloudflare`)
+- **Deployment:** Cloudflare Workers (via `@astrojs/cloudflare`); media in R2
 - **Package manager:** npm
 
 ## Commands
@@ -42,9 +43,20 @@ public/                # Static assets (images, fonts, favicons)
 
 ## Content conventions
 
-### Blog posts
+> **Blog content now lives in the emdash CMS, not in files.** Posts are authored
+> and managed at `/_emdash/admin` and served live at runtime from Cloudflare D1
+> (production) or the local `emdash.db` (dev) via Astro live collections
+> (`getEmDashCollection`/`getEmDashEntry`, see `src/live.config.ts`). Because the
+> content is fetched at request time, blog pages are **server-rendered, not
+> prerendered** — and site search uses emdash's full-text search (`/api/search`),
+> not a static index. The `src/content/blog/*.md` files below are **legacy source
+> material**, kept for history but no longer read by the site. The
+> `authors`, `legal`, and `about` collections remain file-based (see
+> `src/content.config.ts`).
 
-Blog posts live in `src/content/blog/` as Markdown files with YAML frontmatter:
+### Blog posts (legacy file format)
+
+Historically, blog posts lived in `src/content/blog/` as Markdown files with YAML frontmatter. New posts are created in the emdash admin instead; this section documents the legacy file shape:
 
 ```yaml
 ---

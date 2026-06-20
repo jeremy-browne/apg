@@ -1,23 +1,75 @@
 ---
-import "../styles/search.css";
-
 import Container from "../components/layouts/Container.astro";
 import PageTitle from "../components/ui/PageTitle.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PagefindSearch from "astro-pagefind/components/Search";
+import { Icon } from "astro-icon/components";
 ---
 
-<BaseLayout
-    title="Search"
-    description="Search posts from Aussie Pilot Guide."
->
+<BaseLayout title="Search" description="Search posts from Aussie Pilot Guide.">
     <Container class="py-12">
         <PageTitle title="Search" />
 
-        <PagefindSearch
-            id="search"
-            className="pagefind-ui"
-            uiOptions={{ showSubResults: true, autofocus: true }}
-        />
+        <div
+            class="mt-6 flex items-center gap-2 rounded-lg border border-neutral-200 px-4 py-3 dark:border-neutral-700"
+        >
+            <Icon
+                name="lucide:search"
+                class="size-5 shrink-0 text-neutral-400"
+            />
+            <input
+                id="search-input"
+                type="search"
+                placeholder="Search posts…"
+                autocomplete="off"
+                aria-label="Search posts"
+                class="w-full bg-transparent text-base outline-none placeholder:text-neutral-400"
+            />
+        </div>
+
+        <ul id="search-results" class="mt-4 empty:hidden"></ul>
+        <p
+            id="search-empty"
+            class="mt-6 hidden text-sm text-neutral-500 dark:text-neutral-400"
+        >
+            No results.
+        </p>
     </Container>
 </BaseLayout>
+
+<script>
+    import { renderResults } from "../scripts/search.ts";
+
+    const input = document.getElementById("search-input") as HTMLInputElement;
+    const results = document.getElementById(
+        "search-results",
+    ) as HTMLUListElement;
+    const empty = document.getElementById("search-empty") as HTMLElement;
+
+    let debounce: ReturnType<typeof setTimeout> | undefined;
+    let seq = 0;
+
+    const runSearch = async (query: string) => {
+        const q = query.trim();
+        if (q.length < 2) {
+            results.replaceChildren();
+            empty.classList.add("hidden");
+            return;
+        }
+        const current = ++seq;
+        try {
+            const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+            const { results: items } = await res.json();
+            if (current !== seq) return;
+            renderResults(results, empty, items);
+        } catch {
+            if (current === seq) renderResults(results, empty, []);
+        }
+    };
+
+    input?.addEventListener("input", () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => runSearch(input.value), 200);
+    });
+
+    input?.focus();
+</script>

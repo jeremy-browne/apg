@@ -58,17 +58,18 @@ interface Props extends VariantProps<typeof card> {
 
 const { entry, size, loading = "lazy", fetchpriority } = Astro.props;
 
-const { collection, id, data } = entry;
-const { title, description, image } = data;
+const { id, data } = entry;
+const { title, description, featured_image, slug } = data;
+const postSlug = slug ?? id;
 ---
 
 <a
-    href={`/${collection}/${id}`}
+    href={`/blog/${postSlug}`}
     class={`${card({ size })} card-hover-effect card-size-${size}`}
 >
     <OptimizedImage
-        src={image!.src}
-        alt={image!.alt}
+        src={featured_image?.src ?? ""}
+        alt={featured_image?.alt ?? ""}
         width={1600}
         height={900}
         loading={loading}
@@ -80,7 +81,7 @@ const { title, description, image } = data;
     <span
         class="absolute top-0 left-0 z-50 m-2 inline-block rounded-md bg-black/70 px-3 py-1.5 text-xs font-medium text-white capitalize sm:text-sm md:m-2.5"
     >
-        {collection}
+        blog
     </span>
 
     <div class={textBox({ size })}>

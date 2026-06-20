@@ -1,0 +1,23 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "aussie-pilot-guide",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-02-24",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "aussie-pilot-guide-db",
+			"database_id": "b4a856a0-fdaa-4de3-b411-eac604c55207"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			// Run: npx wrangler r2 bucket create aussie-pilot-guide-media
+			"bucket_name": "aussie-pilot-guide-media"
+		}
+	]
+}

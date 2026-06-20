@@ -1,7 +1,6 @@
 ---
-export const prerender = false;
-
 import { getCollection } from "astro:content";
+import { getEmDashCollection } from "emdash";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Container from "../../components/layouts/Container.astro";
 import PageTitle from "../../components/ui/PageTitle.astro";
@@ -13,15 +12,12 @@ if (authors.length === 1) {
     return Astro.redirect(`/authors/${authors[0].id}`, 302);
 }
 
-const allPosts = await getCollection("blog", ({ data }) => !data.draft);
-
-const slugifyName = (name: string) =>
-    name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+const { entries: allPosts } = await getEmDashCollection("posts", { status: "published" });
 
 const authorsSorted = authors
     .map((author) => {
         const postCount = allPosts.filter((post) =>
-            post.data.authors.some((a) => slugifyName(a) === author.id),
+            post.data.bylines?.some((credit) => credit.byline.slug === author.id),
         ).length;
         return { author, postCount };
     })

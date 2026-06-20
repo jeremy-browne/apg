@@ -1,20 +1,24 @@
 ---
-import "../../styles/search.css";
-import PagefindSearch from "astro-pagefind/components/Search";
 import { Icon } from "astro-icon/components";
 ---
 
 <dialog id="search-modal" aria-label="Search">
     <div class="flex flex-col">
         <div
-            class="flex items-center justify-between border-b border-neutral-200 px-4 pt-4 pb-3 dark:border-neutral-700"
+            class="flex items-center gap-2 border-b border-neutral-200 px-4 py-3 dark:border-neutral-700"
         >
-            <span class="text-sm text-neutral-500 dark:text-neutral-400">
-                Press <kbd
-                    class="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-xs dark:bg-neutral-700"
-                    >Esc</kbd
-                > to close
-            </span>
+            <Icon
+                name="lucide:search"
+                class="size-5 shrink-0 text-neutral-400"
+            />
+            <input
+                id="search-input"
+                type="search"
+                placeholder="Search posts…"
+                autocomplete="off"
+                aria-label="Search posts"
+                class="w-full bg-transparent text-base outline-none placeholder:text-neutral-400"
+            />
             <button
                 id="close-search"
                 type="button"
@@ -24,13 +28,17 @@ import { Icon } from "astro-icon/components";
                 <Icon name="lucide:x" class="size-5" />
             </button>
         </div>
-        <div class="overflow-y-auto px-4 py-4">
-            <PagefindSearch
-                id="search"
-                className="pagefind-ui"
-                uiOptions={{ showSubResults: true }}
-            />
-        </div>
+        <ul
+            id="search-results"
+            class="max-h-[60vh] overflow-y-auto px-2 py-2 empty:hidden"
+        >
+        </ul>
+        <p
+            id="search-empty"
+            class="hidden px-4 py-6 text-center text-sm text-neutral-500 dark:text-neutral-400"
+        >
+            No results.
+        </p>
     </div>
 </dialog>
 
@@ -81,17 +89,46 @@ import { Icon } from "astro-icon/components";
 </style>
 
 <script>
+    import { renderResults } from "../../scripts/search.ts";
+
     const modal = document.getElementById("search-modal") as HTMLDialogElement;
     const closeBtn = document.getElementById("close-search");
+    const input = document.getElementById("search-input") as HTMLInputElement;
+    const results = document.getElementById(
+        "search-results",
+    ) as HTMLUListElement;
+    const empty = document.getElementById("search-empty") as HTMLElement;
+
+    let debounce: ReturnType<typeof setTimeout> | undefined;
+    let seq = 0;
+
+    const runSearch = async (query: string) => {
+        const q = query.trim();
+        if (q.length < 2) {
+            results.replaceChildren();
+            empty.classList.add("hidden");
+            return;
+        }
+        const current = ++seq;
+        try {
+            const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+            const { results: items } = await res.json();
+            if (current !== seq) return; // a newer query already returned
+            renderResults(results, empty, items);
+        } catch {
+            if (current === seq) renderResults(results, empty, []);
+        }
+    };
+
+    input?.addEventListener("input", () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(() => runSearch(input.value), 200);
+    });
 
     const openModal = () => {
         modal.showModal();
         document.body.style.overflow = "hidden";
-        requestAnimationFrame(() => {
-            modal
-                .querySelector<HTMLInputElement>(".pagefind-ui__search-input")
-                ?.focus();
-        });
+        requestAnimationFrame(() => input?.focus());
     };
 
     const closeModal = () => modal.close();

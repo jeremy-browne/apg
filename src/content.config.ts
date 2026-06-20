@@ -1,14 +1,6 @@
-import { defineCollection, reference } from "astro:content";
+import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
-
-const featuredSchema = z
-  .enum(["none", "1", "2", "3"])
-  .optional()
-  .transform((val) => {
-    if (!val || val === "none") return undefined;
-    return parseInt(val, 10);
-  });
 
 const imageSchema = z.object({
   src: z.string().min(1),
@@ -29,30 +21,6 @@ const licenses = defineCollection({
     url: z.string().url(),
     type: z.enum(["post", "project"]),
   }),
-});
-
-const baseSchema = z.object({
-  draft: z.boolean().default(false),
-  canonical: z.boolean().default(false),
-  featured: featuredSchema,
-  title: z.string().min(1, { message: "Title cannot be empty." }),
-  description: z.string().min(1, { message: "Description cannot be empty." }),
-  summary: z.string().optional(),
-  category: z.string().optional(),
-  priority: z.number().optional(),
-  authors: z.array(z.string()).default([]),
-  pubDate: z.coerce.date(),
-  updatedDate: z.coerce.date().optional(),
-  license: reference("licenses").optional(),
-  series: z.string().optional(),
-  tags: z.array(z.string()).default([]),
-  image: imageSchema.optional(),
-  ogImage: ogImageOptionalSchema,
-});
-
-const blog = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
-  schema: baseSchema,
 });
 
 const legal = defineCollection({
@@ -85,7 +53,6 @@ const authors = defineCollection({
 
 export const collections = {
   licenses,
-  blog,
   legal,
   about,
   authors,

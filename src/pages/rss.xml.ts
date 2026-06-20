@@ -1,34 +1,40 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
+import { getEmDashCollection, getTermsForEntries } from "emdash";
 import type { APIContext } from "astro";
 
 import { SITE_SETTINGS } from "../site.config";
 
 export async function GET(context: APIContext) {
-  const blogPosts = await getCollection("blog", ({ data }) => !data.draft);
+  const { entries } = await getEmDashCollection("posts", {
+    status: "published",
+    orderBy: { published_at: "desc" },
+  });
 
-  const allEntries = blogPosts.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-  );
+  const entryIds = entries.map((e) => e.data.id);
+  const tagsByEntry = await getTermsForEntries("posts", entryIds, "tag");
 
   return rss({
     title: SITE_SETTINGS.title,
     description: SITE_SETTINGS.description,
     site: context.site ?? "",
-    items: allEntries.map((entry) => ({
-      title: entry.data.title,
-      pubDate: entry.data.pubDate,
-      description: entry.data.description,
-      link: `/blog/${entry.id}/`,
-      ...(entry.data.image && {
-        enclosure: {
-          url: entry.data.image.src,
-          type: "image/webp",
-          length: 1,
-        },
-      }),
-      ...(entry.data.tags.length > 0 && { categories: entry.data.tags }),
-    })),
+    items: entries.map((entry) => {
+      const slug = entry.data.slug ?? entry.id;
+      const tags = (tagsByEntry.get(entry.data.id) ?? []).map((t) => t.label);
+      return {
+        title: entry.data.title,
+        pubDate: entry.data.publishedAt ?? entry.data.createdAt,
+        description: entry.data.description ?? "",
+        link: `/blog/${slug}/`,
+        ...(entry.data.featured_image?.src && {
+          enclosure: {
+            url: entry.data.featured_image.src,
+            type: "image/webp",
+            length: 1,
+          },
+        }),
+        ...(tags.length > 0 && { categories: tags }),
+      };
+    }),
     customData: `<language>en-au</language>`,
   });
 }

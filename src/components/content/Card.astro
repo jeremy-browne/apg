@@ -4,7 +4,6 @@ import type { ContentEntry, ImageLoading, WithMeta } from "../../types";
 import FeaturedTag from "./FeaturedTag.astro";
 import FormattedDate from "./FormattedDate.astro";
 import Series from "./Series.astro";
-import Tags from "./Tags.astro";
 
 interface Props {
     entry: WithMeta<ContentEntry>;
@@ -13,29 +12,30 @@ interface Props {
 const { entry, loading = "lazy" } = Astro.props;
 const imgLoading = loading ?? undefined;
 
-const { collection, id, data, meta } = entry;
+const { id, data, meta } = entry;
 const {
     title,
     description,
-    pubDate,
-    updatedDate,
-    image,
+    publishedAt,
+    updatedAt,
+    featured_image,
     featured,
     series,
-    tags,
+    slug,
 } = data;
 const { readingTimeText } = meta || {};
 
-const displayDate = updatedDate ?? pubDate;
+const displayDate = updatedAt ?? publishedAt ?? undefined;
+const postSlug = slug ?? id;
 ---
 
 <article class="group relative flex flex-col">
     {featured && <FeaturedTag class="absolute top-1 left-1 z-10" />}
 
-    {image ? (
+    {featured_image?.src ? (
         <OptimizedImage
-            src={image.src}
-            alt={image.alt}
+            src={featured_image.src}
+            alt={featured_image.alt ?? ""}
             width={1600}
             height={900}
             sizes="(max-width: 768px) 100vw, 33vw"
@@ -51,7 +51,7 @@ const displayDate = updatedDate ?? pubDate;
         class="mb-2 line-clamp-2 text-xl font-semibold transition-colors duration-250 ease-out group-hover:text-blue-500 group-active:text-blue-500 dark:group-hover:text-yellow-400 dark:group-active:text-yellow-400"
     >
         <a
-            href={`/${collection}/${id}`}
+            href={`/blog/${postSlug}`}
             class="after:absolute after:inset-0 after:content-['']"
         >
             {title}
@@ -63,7 +63,6 @@ const displayDate = updatedDate ?? pubDate;
 
     <div class="mt-3.5 flex flex-col items-start gap-y-4">
         {series && <Series {series} class="relative z-10" />}
-        {tags.length > 0 && <Tags {tags} class="relative z-10" />}
 
         <div
             class="flex items-center gap-x-2 text-sm text-gray-700 dark:text-gray-300"

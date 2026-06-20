@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getEmDashCollection } from "emdash";
 import Container from "../components/layouts/Container.astro";
 import ContentGrid from "../components/layouts/sections/ContentGrid.astro";
 import FeaturedContent from "../components/layouts/sections/FeaturedContent.astro";
@@ -7,17 +7,16 @@ import EmptyState from "../components/ui/EmptyState.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { attachMeta } from "../utils/meta";
 
-const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const { entries: allPosts } = await getEmDashCollection("posts", {
+    status: "published",
+    orderBy: { published_at: "desc" },
+});
 
-const sortedPosts = allPosts.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-
-const latestPosts = sortedPosts.slice(0, 3).map((post) => attachMeta(post));
+const latestPosts = allPosts.slice(0, 3).map((post) => attachMeta(post));
 
 const featured = allPosts
-    .filter((item) => item.data.featured !== undefined)
-    .sort((a, b) => (a.data.featured ?? 0) - (b.data.featured ?? 0));
+    .filter((item) => item.data.featured !== undefined && item.data.featured !== null)
+    .sort((a, b) => Number(a.data.featured ?? 99) - Number(b.data.featured ?? 99));
 
 const hasContent = featured.length > 0 || latestPosts.length > 0;
 ---

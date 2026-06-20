@@ -24,5 +24,15 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Local Netlify folder
-.netlify
+# Wrangler / Cloudflare local artefacts
+.wrangler
+
+# emdash local dev database, uploads, and generated artefacts
+emdash.db
+emdash.db-shm
+emdash.db-wal
+uploads/
+.emdash/
+
+# legacy Netlify local folder
+.netlify/

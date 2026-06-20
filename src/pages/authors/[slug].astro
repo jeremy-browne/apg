@@ -1,34 +1,28 @@
 ---
 import { getCollection, render } from "astro:content";
+import { getEmDashCollection } from "emdash";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Container from "../../components/layouts/Container.astro";
 import Card from "../../components/content/Card.astro";
 import Prose from "../../components/content/Prose.astro";
 import { attachMeta } from "../../utils/meta";
 
-export async function getStaticPaths() {
-    const authors = await getCollection("authors");
-    return authors.map((author) => ({
-        params: { slug: author.id },
-        props: { author },
-    }));
-}
+const { slug } = Astro.params;
+const authors = await getCollection("authors");
+const author = authors.find((a) => a.id === slug);
 
-const { author } = Astro.props;
+if (!author) return Astro.redirect("/404");
+
 const { Content } = await render(author);
 
-const slugifyName = (name: string) =>
-    name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-
-const posts = (
-    await getCollection(
-        "blog",
-        ({ data }) =>
-            !data.draft &&
-            data.authors.some((a) => slugifyName(a) === author.id),
-    )
-)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const { entries: allPosts } = await getEmDashCollection("posts", { status: "published" });
+const posts = allPosts
+    .filter((post) => post.data.bylines?.some((credit) => credit.byline.slug === slug))
+    .sort((a, b) => {
+        const aDate = a.data.publishedAt?.valueOf() ?? 0;
+        const bDate = b.data.publishedAt?.valueOf() ?? 0;
+        return bDate - aDate;
+    })
     .map((p) => attachMeta(p));
 ---
 

@@ -1,32 +1,32 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import { getEmDashCollection } from "emdash";
 import { SITE_SETTINGS } from "../site.config";
 
 function toTitleCase(str: string): string {
   return str.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function sortPosts<T extends { data: { priority?: number; pubDate: Date } }>(posts: T[]): T[] {
+type Post = { data: { priority?: number; publishedAt?: Date | null; slug?: string | null; title: string; summary?: string; description?: string; category?: string; canonical?: boolean; id: string } };
+
+function sortPosts<T extends Post>(posts: T[]): T[] {
   return [...posts].sort((a, b) => {
     const aPriority = a.data.priority ?? Infinity;
     const bPriority = b.data.priority ?? Infinity;
     if (aPriority !== bPriority) return aPriority - bPriority;
-    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+    return (b.data.publishedAt?.valueOf() ?? 0) - (a.data.publishedAt?.valueOf() ?? 0);
   });
 }
 
 export const GET: APIRoute = async ({ site }) => {
   const siteUrl = site ? site.href.replace(/\/$/, "") : "https://aussiepilotguide.com";
 
-  const canonicalPosts = await getCollection(
-    "blog",
-    ({ data }) => !data.draft && data.canonical,
-  );
+  const { entries: allPosts } = await getEmDashCollection("posts", { status: "published" });
+  const canonicalPosts = allPosts.filter((p) => p.data.canonical);
 
   const authors = await getCollection("authors");
   const aboutPages = await getCollection("about");
 
-  // Group by category, preserving insertion order after sorting
   const grouped = new Map<string, typeof canonicalPosts>();
   const uncategorised: typeof canonicalPosts = [];
 
@@ -55,8 +55,9 @@ export const GET: APIRoute = async ({ site }) => {
     lines.push(`## ${toTitleCase(category)}`);
     lines.push("");
     for (const post of posts) {
-      const desc = post.data.summary ?? post.data.description;
-      lines.push(`- [${post.data.title}](${siteUrl}/blog/${post.id}.md): ${desc}`);
+      const slug = post.data.slug ?? post.id;
+      const desc = post.data.summary ?? post.data.description ?? "";
+      lines.push(`- [${post.data.title}](${siteUrl}/blog/${slug}.md): ${desc}`);
     }
     lines.push("");
   }
@@ -65,8 +66,9 @@ export const GET: APIRoute = async ({ site }) => {
     lines.push("## Blog Posts");
     lines.push("");
     for (const post of uncategorised) {
-      const desc = post.data.summary ?? post.data.description;
-      lines.push(`- [${post.data.title}](${siteUrl}/blog/${post.id}.md): ${desc}`);
+      const slug = post.data.slug ?? post.id;
+      const desc = post.data.summary ?? post.data.description ?? "";
+      lines.push(`- [${post.data.title}](${siteUrl}/blog/${slug}.md): ${desc}`);
     }
     lines.push("");
   }
