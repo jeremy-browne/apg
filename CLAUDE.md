@@ -15,30 +15,44 @@ An Australian flight training blog and resource site helping student pilots navi
 ## Commands
 
 ```
-npm run dev          # Start dev server
-npm run build        # Production build
+npm run dev          # Start dev server (emdash on local emdash.db)
+npm run build        # Production build (reads PUBLIC_* from .env)
 npm run preview      # Preview production build locally
 npm run astro check  # TypeScript/Astro diagnostics
+npx wrangler deploy  # Build + this = release to Cloudflare Workers
+
+npm run optimise:image -- <input> [name]              # → spec-compliant WebP in public/images/blog/
+npm run import:posts -- --url <inst> --token <ec_pat> # legacy .md → emdash (--refresh / --dry-run)
 ```
+
+For a non-production build origin (e.g. a `*.workers.dev` preview) set `EMDASH_SITE_URL=https://<host>` so canonical URLs and the admin passkey rpId match that origin.
 
 ## Project structure
 
 ```
 src/
 ├── content/
-│   ├── blog/          # Blog posts as .md/.mdx files
-│   └── authors/       # Author profiles as .md files (slug = filename)
-├── components/        # Astro and React components
-│   ├── *.astro        # Static layout components
-│   └── *.tsx          # Interactive React islands (client:load / client:visible)
-├── layouts/           # Page layouts
+│   ├── authors/       # Author profile pages (.md, slug = filename)
+│   ├── legal/ about/ licenses/   # Other file-based collections
+│   └── blog/          # Legacy markdown sources — NOT read by the site
+├── content.config.ts  # File-based collections (Zod schemas)
+├── live.config.ts     # emdash live collection (blog content from D1/emdash.db)
+├── actions/           # Astro Actions (contact, newsletter) — read runtime secrets via utils/env.ts
+├── middleware.ts      # Security headers + www→apex redirect
+├── components/        # Astro + React (React only where interactivity is needed)
+├── layouts/
 ├── pages/
+│   ├── api/search.ts      # SSR endpoint backed by emdash full-text search
 │   ├── authors/
-│   │   ├── index.astro    # SSR: redirects to solo author, or lists all authors
-│   │   └── [slug].astro   # Static: individual author profile + their posts
-│   └── ...            # Other file-based routes
-└── styles/            # Global styles
-public/                # Static assets (images, fonts, favicons)
+│   │   ├── index.astro    # SSR: redirect to solo author, or ranked list
+│   │   └── [slug].astro   # Profile page (file profile) + the byline's posts (emdash)
+│   └── blog/[id].astro    # Blog post (emdash, runtime)
+├── utils/             # incl. media.ts (resolve emdash media URLs), env.ts (runtime secrets)
+└── styles/
+worker.ts (src/)       # Cloudflare Worker entrypoint
+wrangler.jsonc         # Bindings (D1 DB, R2 MEDIA, KV SESSION) + custom domains
+public/                # Static assets; images/blog/ holds source WebPs
+scripts/               # optimise-image.mjs, import-posts.mjs
 ```
 
 ## Content conventions
@@ -71,11 +85,11 @@ draft: false
 ---
 ```
 
-The `authors` field is an array of display-name strings. Each name must match an author profile in `src/content/authors/` — the filename is the slugified name (e.g. `"Jeremy Browne"` → `jeremy-browne.md`). If a name has no matching profile, the build logs a warning and the name renders as plain text instead of a link.
+**How the legacy fields map to emdash** (the importer applies this; useful when reading the migrated content): `description`→`excerpt`, `pubDate`→`publishedAt`, `updatedDate`→`updatedAt`, `authors`→`bylines`, `image`→`featured_image` (R2 reference), `draft`→`status`, `featured` stays, and `tags`/`category` become `tag`/`category` taxonomy terms. emdash post content is **PortableText**, not markdown.
 
 ### Content categories
 
-Use these categories to organise posts. New categories can be added but check existing ones first:
+Categories are now `category` taxonomy terms in emdash (and `tag` for tags). Use these categories to organise posts; check existing terms before adding new ones:
 
 - `training-pathways` — licence types, RPC vs RPL, how to become a pilot
 - `gear` — what to buy at each stage (student, PPL, CPL)
@@ -86,15 +100,9 @@ Use these categories to organise posts. New categories can be added but check ex
 
 ### Images
 
-Blog post images live in `public/images/blog/`. Reference them in frontmatter as:
+Featured images are uploaded through the emdash admin (stored in R2, referenced as a media field — resolve a URL with `mediaUrl()` in `src/utils/media.ts`). Prepare source files to spec **before** uploading; `public/images/blog/` holds the optimised source WebPs.
 
-```yaml
-image:
-  src: /images/blog/your-image.webp
-  alt: Descriptive alt text
-```
-
-**Specs before committing:**
+**Specs:**
 
 - **Aspect ratio:** 16:9 — all card and post header layouts crop to this ratio
 - **Resolution:** 1600×900px
@@ -105,7 +113,12 @@ Run `npm run optimise:image -- <input-path> [output-basename]` to crop to 16:9, 
 
 ### Authors
 
-Author profiles live in `src/content/authors/` as Markdown files. The filename becomes the URL slug and must be the slugified form of the author's display name (`Jeremy Browne` → `jeremy-browne.md`).
+Authorship has **two linked parts**:
+
+- **Byline** (post attribution) — created in the emdash admin; carries the display name + slug shown on each post. Assigned to posts via the CMS, not a frontmatter `authors` array.
+- **Profile page** (`/authors/[slug]`) — a Markdown file in `src/content/authors/` (filename = slug) with bio/role/image.
+
+They link by **slug**: a byline `jeremy-browne` resolves to `src/content/authors/jeremy-browne.md`.
 
 ```yaml
 ---
@@ -119,16 +132,15 @@ image:                                                 # optional
 Bio text in Markdown...
 ```
 
-**Routing behaviour:**
-- `/authors` — if one author exists, redirects to their profile; if multiple, shows a ranked list (most articles first). This page is SSR (not prerendered) so it always reflects the current author set without a cache-busting rebuild.
-- `/authors/[slug]` — static profile page with bio and a grid of the author's posts.
+**Routing behaviour (both SSR — `output: "server"`):**
+- `/authors` — one author redirects to their profile; multiple shows a ranked list (most posts first).
+- `/authors/[slug]` — profile page (file-based bio) + a grid of that byline's emdash posts.
 
 **Adding a new author:**
-1. Create `src/content/authors/[slug].md` with the frontmatter above.
-2. Use the author's display name (matching the slug) in any blog post `authors` array.
-3. The build will automatically include them in the `/authors` list and generate their profile page.
+1. Create the **byline** in the emdash admin and assign it to posts.
+2. Create `src/content/authors/<slug>.md` (slug matching the byline) for the profile page.
 
-**Missing profile warning:** If a blog post names an author with no matching profile file, `npm run build` and `npm run dev` emit a console warning identifying the post and the expected file path. The author name renders as plain text (no broken link) until a profile is created.
+A byline whose slug has no matching profile file renders as plain text (no link) rather than breaking.
 
 ### Tags
 
@@ -153,17 +165,28 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 
 ## Architecture notes
 
-- The site is static-first. Most pages should be fully static with zero client-side JS.
-- React components are rendered as Astro islands using `client:load` or `client:visible` directives. Do not wrap entire pages in React.
-- Content collections are defined in `src/content.config.ts` with Zod schemas for type-safe frontmatter validation.
-- Blog images are stored in `public/images/blog/` and referenced in frontmatter as `/images/blog/filename.webp`. They are served as-is from Cloudflare's CDN, so compress them before committing.
-- The site uses hybrid rendering: almost all pages are prerendered (static), but `src/pages/authors/index.astro` has `export const prerender = false` so author-count-dependent redirect logic is evaluated fresh on each request rather than being baked into the build.
+- **Server-rendered (`output: "server"`) on Cloudflare Workers.** emdash serves blog content live at runtime via Astro **live collections** (`getEmDashCollection`/`getEmDashEntry`, see `src/live.config.ts`) — it cannot be prerendered. Keep client-side JS minimal; render React only as Astro islands (`client:load`/`client:visible`), never whole pages.
+- **emdash injects routes**: the admin + API under `/_emdash/*`, plus `/robots.txt` and `/sitemap.xml`. Don't add local routes that collide with these.
+- **Search** is emdash full-text search via `src/pages/api/search.ts` (SSR). Pagefind was removed — it needs static HTML, which runtime content doesn't produce.
+- **Media** is uploaded to R2 and served at `/_emdash/api/media/file/<storageKey>`. A media field is a reference (no ready `src`); resolve a URL with `mediaUrl()` in `src/utils/media.ts`.
+- **`siteUrl`** (`astro.config.mjs`) defaults to `https://aussiepilotguide.com`; override per-build with `EMDASH_SITE_URL`. It drives the WebAuthn **passkey rpId**, so admin passkeys are domain-bound — changing the domain invalidates existing passkeys (re-register on the new origin).
+- **Security headers** are set in `src/middleware.ts` (a Worker's static `_headers` only applies to assets, not SSR HTML). It skips `/_emdash/*` so the admin's iframes/passkeys keep working, and redirects `www` → apex.
+- **Forms** (`src/actions/`, `src/pages/api/newsletter/`) read runtime secrets via `readEnv()` in `src/utils/env.ts` (`locals.runtime.env`) — `import.meta.env` does **not** see `wrangler secret put` secrets at runtime on Workers.
+- **Dev gotcha:** `astro.config.mjs` sets `vite.ssr.noExternal: ["@astrojs/react"]` so the React renderer's `astro:react:opts` virtual module resolves; without it `npm run dev` crashes (`Received protocol 'astro:'`).
+- **File-based collections** (`authors`, `legal`, `about`, `licenses`) are still defined in `src/content.config.ts` with Zod schemas.
+
+## Deployment & secrets
+
+Hosted on Cloudflare Workers (`aussiepilotguide.com` custom domain, `wrangler.jsonc`). Release with `npm run build && npx wrangler deploy`. Bindings: D1 `DB`, R2 `MEDIA`, KV `SESSION`. Runtime secrets (`wrangler secret put`): `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `RESEND_AUDIENCE_ID`, `NEWSLETTER_SECRET`. Build-time public var (`.env`): `PUBLIC_TURNSTILE_SITE_KEY`.
+
+## Built since the original scope
+
+- **Newsletter** — double opt-in capture via `src/actions/` + `src/pages/api/newsletter/confirm.ts` (Resend audience, HMAC-signed token). **Contact form** likewise (Resend + Turnstile).
 
 ## Future scope (do not build yet, but design with these in mind)
 
-- **Online theory courses** — gated content with auth, likely SSR routes under `/courses/`
-- **Practice exams** — interactive React islands with a backend (Supabase or similar)
-- **Gear store** — product pages with Stripe or Shopify Storefront API integration
-- **Newsletter** — email capture for new post notifications
+- **Online theory courses** — gated content with auth, likely SSR routes under `/courses/` (the site is already SSR with emdash + D1 to build on).
+- **Practice exams** — interactive React islands with a backend (D1/emdash or Supabase).
+- **Gear store** — product pages with Stripe or Shopify Storefront API integration.
 
-Keep the content collection schemas, routing, and component architecture flexible enough to support these additions without major refactoring.
+Keep the content schemas, routing, and component architecture flexible enough to support these without major refactoring.
