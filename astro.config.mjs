@@ -74,6 +74,15 @@ export default defineConfig({
         storage: isDev
           ? local({ directory: "./uploads", baseUrl: "/_emdash/api/media/file" })
           : r2({ binding: "MEDIA" }),
+        plugins: [
+          {
+            id: "emdash-resend-email",
+            version: "1.0.0",
+            format: "standard",
+            entrypoint: "./src/plugins/resend-email.ts",
+            capabilities: ["hooks.email-transport:register"],
+          },
+        ],
       }),
       sitemap(),
       icon(),
