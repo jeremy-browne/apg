@@ -179,6 +179,24 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 
 Hosted on Cloudflare Workers (`aussiepilotguide.com` custom domain, `wrangler.jsonc`). Release with `npm run build && npx wrangler deploy`. Bindings: D1 `DB`, R2 `MEDIA`, KV `SESSION`. Runtime secrets (`wrangler secret put`): `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `RESEND_AUDIENCE_ID`, `NEWSLETTER_SECRET`. Build-time public var (`.env`): `PUBLIC_TURNSTILE_SITE_KEY`.
 
+**emdash email provider** (`src/plugins/resend-email.ts`) is the exception: a `PluginContext` can't reach `locals.runtime.env`, so its Resend key + From address are entered in the admin under **Plugins → Resend → Settings** and stored in D1 `options` as `plugin:emdash-resend-email:settings:*`. They must be set once per database (dev `emdash.db` and prod D1 separately). The `RESEND_API_KEY` secret above is unrelated — it stays in use by the contact form and newsletter via `readEnv()`.
+
+### Deploy gotchas
+
+Each of these has already cost a broken or failed deploy — check them before releasing.
+
+- **Always rebuild before deploying — never `wrangler deploy` alone.** `@astrojs/cloudflare` writes a resolved copy of the config to `dist/server/wrangler.json` at build time, and wrangler deploys from *that*, not from `wrangler.jsonc`. Editing `wrangler.jsonc` has no effect until you rebuild, and the failure is confusing: wrangler reports the *old* binding values back to you. This is why the release command is always `npm run build && npx wrangler deploy`.
+- **Declaring `vite.resolve` in `astro.config.mjs` replaces emdash's**, rather than merging with it. emdash sets `resolve.dedupe: ["@emdash-cms/admin", "react", "react-dom"]`; if you add a `resolve` block you must repeat that list, or the admin loads a second copy of React and every island dies with `react/index.js does not provide an export named 'createElement'`. The public site keeps working, so this only shows up in `/_emdash/admin`.
+- **Verify the admin after any Vite/React config change** — load `/_emdash/admin` and confirm it renders past "Loading EmDash…". A production build succeeding proves nothing about hydration.
+- **Replacing the SESSION KV namespace signs out every admin user.** Passkeys live in D1 and survive, so signing in again is enough — but don't rotate the namespace when you need uninterrupted access.
+- **Cache-bust when checking admin APIs in a browser.** `/_emdash/api/*` responses are cached per URL; a stale 200 can look like a real answer long after the state changed. Add a throwaway query param.
+
+### emdash plugins
+
+- Plugins are registered in the `plugins: []` array of the `emdash()` integration in `astro.config.mjs`; there is no install step. A descriptor's `entrypoint` is emitted **verbatim** into a generated virtual module (`\0virtual:emdash/plugins`), so it must be a resolvable module specifier — a relative path like `./src/plugins/x.ts` resolves against the virtual module, not the config file. Local plugins therefore go through a `vite.resolve.alias` (see `resendPluginEntrypoint` in `astro.config.mjs`).
+- Capabilities are enforced silently: a hook whose required capability is missing from the descriptor is **skipped without warning**. `email:deliver` needs `hooks.email-transport:register`; `ctx.http` needs `network:request` plus `allowedHosts`.
+- A plugin's Block Kit settings page lives at `/_emdash/admin/plugins/<plugin-id>/settings` (and in the sidebar's PLUGINS section). The gear icon on the plugins list goes to `/_emdash/admin/plugins/<plugin-id>`, which renders blank — not a bug in the plugin.
+
 ## Built since the original scope
 
 - **Newsletter** — double opt-in capture via `src/actions/` + `src/pages/api/newsletter/confirm.ts` (Resend audience, HMAC-signed token). **Contact form** likewise (Resend + Turnstile).

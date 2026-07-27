@@ -27,7 +27,7 @@
 	"kv_namespaces": [
 		{
 			"binding": "SESSION",
-			"id": "1d3509b8d5df41c58a40f059a295c150"
+			"id": "577994fd633e41e78aff669e1677c35c"
 		}
 	],
 	// Production custom domain. The zone is already on Cloudflare, so
