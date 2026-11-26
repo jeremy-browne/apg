@@ -11,6 +11,10 @@
 		"enabled": true,
 		"head_sampling_rate": 1
 	},
+	// Daily health check (src/worker.ts scheduled handler): 21:00 UTC = 07:00/08:00 Melbourne.
+	"triggers": {
+		"crons": ["0 21 * * *"]
+	},
 	"vars": {
 		// Resend audience confirmed newsletter subscribers are added to (not a secret)
 		"RESEND_AUDIENCE_ID": "428ddae1-bd26-4235-8948-201d866fc558"
