@@ -6,6 +6,10 @@
 	// and verification surface (canonical URLs still point to the apex).
 	"workers_dev": true,
 	"compatibility_date": "2026-02-24",
+	"vars": {
+		// Resend audience confirmed newsletter subscribers are added to (not a secret)
+		"RESEND_AUDIENCE_ID": "428ddae1-bd26-4235-8948-201d866fc558"
+	},
 	"compatibility_flags": [
 		"nodejs_compat"
 	],

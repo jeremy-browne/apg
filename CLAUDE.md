@@ -177,7 +177,7 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 
 ## Deployment & secrets
 
-Hosted on Cloudflare Workers (`aussiepilotguide.com` custom domain, `wrangler.jsonc`). Release with `npm run build && npx wrangler deploy`. Bindings: D1 `DB`, R2 `MEDIA`, KV `SESSION`. Runtime secrets (`wrangler secret put`): `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `RESEND_AUDIENCE_ID`, `NEWSLETTER_SECRET`. Build-time public var (`.env`): `PUBLIC_TURNSTILE_SITE_KEY`.
+Hosted on Cloudflare Workers (`aussiepilotguide.com` custom domain, `wrangler.jsonc`). Release with `npm run build && npx wrangler deploy`. Bindings: D1 `DB`, R2 `MEDIA`, KV `SESSION`. Runtime secrets (`wrangler secret put`): `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `NEWSLETTER_SECRET`. Plain var in `wrangler.jsonc`: `RESEND_AUDIENCE_ID` (keep it there — dashboard-only vars are wiped by the next `wrangler deploy`). Build-time public var (`.env`): `PUBLIC_TURNSTILE_SITE_KEY`.
 
 **emdash email provider** (`src/plugins/resend-email.ts`) is the exception: a `PluginContext` can't reach `locals.runtime.env`, so its Resend key + From address are entered in the admin under **Plugins → Resend → Settings** and stored in D1 `options` as `plugin:emdash-resend-email:settings:*`. They must be set once per database (dev `emdash.db` and prod D1 separately). The `RESEND_API_KEY` secret above is unrelated — it stays in use by the contact form and newsletter via `readEnv()`.
 
