@@ -201,6 +201,15 @@ Each of these has already cost a broken or failed deploy — check them before r
 
 - **Newsletter** — double opt-in capture via `src/actions/` + `src/pages/api/newsletter/confirm.ts` (Resend audience, HMAC-signed token). **Contact form** likewise (Resend + Turnstile).
 
+## Monitoring, analytics & CI
+
+- **Health check** — `src/health.ts`, wired in `src/worker.ts`. `GET /api/health` runs smoke checks in-process (returns JSON, 503 on failure; sends no email). A daily Cron Trigger (`triggers.crons` in `wrangler.jsonc`) runs the same checks and emails the owner via Resend if any fail. Add a check whenever you add a critical route. It runs inside the Worker because Cloudflare bot protection returns 403 to GitHub-hosted runners, so external smoke tests from Actions don't work.
+- **Logs** — Workers Logs is enabled (`observability` in `wrangler.jsonc`): Cloudflare dashboard → Workers → aussie-pilot-guide → Observability.
+- **CI** — `.github/workflows/ci.yml` runs `astro check` + build on PRs and pushes to `main`. Keep `astro check` at 0 errors.
+- **Analytics** — GA4 (`G-SWHGXCSP5C`) and Cloudflare Web Analytics (cookieless beacon) are both in `BaseLayout.astro`. Cloudflare's automatic beacon injection does not reach Worker-rendered HTML, so the beacon is installed manually. Custom GA events: `newsletter_signup`, `newsletter_confirm`, `contact_submit`, plus any element with `data-track="event_name"` (optional `data-track-label`) sends that event on click. Use `data-track` on affiliate and sponsor links. Search Console (domain property) is linked to GA.
+- **Sitemaps** — emdash serves `/sitemap.xml`, built from collections with SEO enabled (`has_seo` + `url_pattern` on `_emdash_collections`; posts use `/blog/{slug}/`). `@astrojs/sitemap` still emits `sitemap-index.xml` for the static pages. Both are submitted in Search Console.
+- **Post fields that exist** (see `emdash-env.d.ts`): `title`, `featured_image`, `content`, `excerpt`, `featured`. Categories and tags are taxonomies (`getTermsForEntries`), not fields. Reading a nonexistent field silently yields `undefined`; that's what left `llms.txt` empty for months.
+
 ## Future scope (do not build yet, but design with these in mind)
 
 - **Online theory courses** — gated content with auth, likely SSR routes under `/courses/` (the site is already SSR with emdash + D1 to build on).
