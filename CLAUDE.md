@@ -19,7 +19,7 @@ npm run dev          # Start dev server (emdash on local emdash.db)
 npm run build        # Production build (reads PUBLIC_* from .env)
 npm run preview      # Preview production build locally
 npm run astro check  # TypeScript/Astro diagnostics
-npx wrangler deploy  # Build + this = release to Cloudflare Workers
+npx wrangler deploy  # Manual release (after a build) — normally automatic, see Deployment
 
 npm run optimise:image -- <input> [name]              # → spec-compliant WebP in public/images/blog/
 npm run import:posts -- --url <inst> --token <ec_pat> # legacy .md → emdash (--refresh / --dry-run)
@@ -177,7 +177,7 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 
 ## Deployment & secrets
 
-Hosted on Cloudflare Workers (`aussiepilotguide.com` custom domain, `wrangler.jsonc`). Release with `npm run build && npx wrangler deploy`. Bindings: D1 `DB`, R2 `MEDIA`, KV `SESSION`. Runtime secrets (`wrangler secret put`): `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `NEWSLETTER_SECRET`. Plain var in `wrangler.jsonc`: `RESEND_AUDIENCE_ID` (keep it there — dashboard-only vars are wiped by the next `wrangler deploy`). Build-time public var (`.env`): `PUBLIC_TURNSTILE_SITE_KEY`.
+Hosted on Cloudflare Workers (`aussiepilotguide.com` custom domain, `wrangler.jsonc`). **Releases are automatic:** Workers Builds is connected to GitHub (`jeremy-browne/apg`). Every push to `main` runs `npm run build` + `npx wrangler deploy` on Cloudflare, and other branches get a preview version. Build logs are under the Worker's *Deployments* tab. A manual `npm run build && npx wrangler deploy` still works, but it needs the user's own wrangler login. Bindings: D1 `DB`, R2 `MEDIA`, KV `SESSION`. Runtime secrets (`wrangler secret put`): `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `NEWSLETTER_SECRET`. Plain var in `wrangler.jsonc`: `RESEND_AUDIENCE_ID` (keep it there — dashboard-only vars are wiped by the next `wrangler deploy`). Build-time vars live in the Worker's *Settings → Build → Variables and secrets* (`PUBLIC_TURNSTILE_SITE_KEY`, `NODE_VERSION=22`) and in local `.env` for dev. A new `PUBLIC_*` var must be added in **both** places, because `.env` isn't in git, so the Cloudflare build can't see it.
 
 **emdash email provider** (`src/plugins/resend-email.ts`) is the exception: a `PluginContext` can't reach `locals.runtime.env`, so its Resend key + From address are entered in the admin under **Plugins → Resend → Settings** and stored in D1 `options` as `plugin:emdash-resend-email:settings:*`. They must be set once per database (dev `emdash.db` and prod D1 separately). The `RESEND_API_KEY` secret above is unrelated — it stays in use by the contact form and newsletter via `readEnv()`.
 
