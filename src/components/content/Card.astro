@@ -4,7 +4,6 @@ import { mediaUrl } from "../../utils/media";
 import type { ContentEntry, ImageLoading, WithMeta } from "../../types";
 import FeaturedTag from "./FeaturedTag.astro";
 import FormattedDate from "./FormattedDate.astro";
-import Series from "./Series.astro";
 
 interface Props {
     entry: WithMeta<ContentEntry>;
@@ -21,7 +20,6 @@ const {
     updatedAt,
     featured_image,
     featured,
-    series,
     slug,
 } = data;
 const { readingTimeText } = meta || {};
@@ -37,7 +35,7 @@ const featuredSrc = mediaUrl(featured_image);
     {featuredSrc ? (
         <OptimizedImage
             src={featuredSrc}
-            alt={featured_image.alt ?? ""}
+            alt={featured_image?.alt ?? ""}
             width={1600}
             height={900}
             sizes="(max-width: 768px) 100vw, 33vw"
@@ -64,7 +62,6 @@ const featuredSrc = mediaUrl(featured_image);
     </p>
 
     <div class="mt-3.5 flex flex-col items-start gap-y-4">
-        {series && <Series {series} class="relative z-10" />}
 
         <div
             class="flex items-center gap-x-2 text-sm text-gray-700 dark:text-gray-300"

@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import FeaturedTag from "./FeaturedTag.astro";
 import FormattedDate from "./FormattedDate.astro";
-import Series from "./Series.astro";
 import OptimizedImage from "../ui/OptimizedImage.astro";
 import Tooltip from "../ui/Tooltip.astro";
 import { formatDate } from "../../utils/formatDate";
@@ -20,7 +19,7 @@ interface Props {
 const { entry, loading = "eager", fetchpriority = "high" } = Astro.props;
 
 const { data, meta } = entry;
-const { title, publishedAt, updatedAt, bylines, featured, featured_image, series } = data;
+const { title, publishedAt, updatedAt, bylines, featured, featured_image } = data;
 const { readingTimeText } = meta || {};
 
 const knownAuthorIds = new Set(
@@ -97,12 +96,11 @@ const resolvedAuthors = ((bylines ?? []).length > 0
         </div>
     </div>
 
-    {series && <Series {series} class="mt-6" />}
 
     {mediaUrl(featured_image) && (
         <OptimizedImage
             src={mediaUrl(featured_image)}
-            alt={featured_image.alt ?? ""}
+            alt={featured_image?.alt ?? ""}
             {loading}
             {fetchpriority}
             wrapperClass="mt-6 aspect-video rounded-xl"

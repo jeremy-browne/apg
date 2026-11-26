@@ -1,0 +1,50 @@
+name: Site health
+
+# Daily smoke test of the live site. A failed scheduled run emails the repo
+# owner (GitHub's default Actions notification), so outages like the
+# Nov 2026 newsletter 500s get noticed without waiting for user reports.
+on:
+  schedule:
+    - cron: "0 21 * * *" # 07:00/08:00 Melbourne
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      SITE: https://aussiepilotguide.com
+    steps:
+      - name: Run checks
+        run: |
+          set -u
+          fail=0
+          cb() { echo "cb=$RANDOM$RANDOM"; }
+          check() { # name, expected, actual
+            if [ "$2" = "$3" ]; then echo "✅ $1"; else echo "❌ $1 — expected '$2', got '$3'"; fail=1; fi
+          }
+
+          check "Home page" 200 "$(curl -s -o /dev/null -w '%{http_code}' "$SITE/?$(cb)")"
+          check "Blog index" 200 "$(curl -s -o /dev/null -w '%{http_code}' "$SITE/blog/?$(cb)")"
+
+          sitekey=$(curl -s "$SITE/newsletter?$(cb)" | grep -c 'data-sitekey="0x')
+          check "Turnstile site key rendered" yes "$([ "$sitekey" -gt 0 ] && echo yes || echo no)"
+
+          # Without a Turnstile token the action must reject with 400 — a 500 means
+          # the handler is crashing (e.g. env/secret access broken).
+          check "Newsletter subscribe handler" 400 "$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+            -H "Origin: $SITE" -F email=healthcheck@example.com "$SITE/_actions/newsletterSubscribe?$(cb)")"
+          check "Contact handler" 400 "$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+            -H "Origin: $SITE" -F name=x -F email=healthcheck@example.com -F message=x "$SITE/_actions/contact?$(cb)")"
+
+          # A well-formed but unsigned token must be 'invalid'; 'error' means a
+          # secret (NEWSLETTER_SECRET / RESEND_*) is missing.
+          token="$(printf '{"email":"a@b.co","exp":1}' | base64 -w0 | tr '+/' '-_' | tr -d '=').AAAA"
+          check "Newsletter confirm secrets" "$SITE/newsletter?confirmed=invalid" \
+            "$(curl -s -o /dev/null -w '%{redirect_url}' "$SITE/api/newsletter/confirm?token=$token&$(cb)")"
+
+          items=$(curl -s "$SITE/rss.xml?$(cb)" | grep -c '<item>' || true)
+          check "RSS has posts" yes "$([ "$items" -gt 0 ] && echo yes || echo no)"
+          posts=$(curl -s "$SITE/llms.txt?$(cb)" | grep -c '/blog/' || true)
+          check "llms.txt lists posts" yes "$([ "$posts" -gt 0 ] && echo yes || echo no)"
+
+          exit $fail

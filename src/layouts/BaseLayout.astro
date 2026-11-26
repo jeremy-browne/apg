@@ -106,6 +106,41 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-SWHGXCSP5C');
+
+            // Conversion events (mark these as key events in GA4 Admin).
+            // - Success pages: forms redirect to ?success=1 / ?confirmed=1.
+            //   The param is stripped after sending so a refresh doesn't count twice.
+            // - Any element with data-track="event_name" sends that event on click
+            //   (optional data-track-label adds a label), e.g. affiliate links.
+            (function () {
+                var url = new URL(location.href);
+                var page = url.pathname.replace(/\/$/, "");
+                var sent = null;
+                if (page === "/newsletter" && url.searchParams.get("success") === "1") {
+                    sent = "success"; gtag("event", "newsletter_signup", { form_location: "newsletter_page" });
+                } else if (page === "/newsletter" && url.searchParams.get("confirmed") === "1") {
+                    sent = "confirmed"; gtag("event", "newsletter_confirm");
+                } else if (page === "/contact" && url.searchParams.get("success") === "1") {
+                    sent = "success"; gtag("event", "contact_submit");
+                }
+                if (sent) {
+                    // Wait for load: page scripts (e.g. contact draft clearing) read the param too.
+                    window.addEventListener("load", function () {
+                        url.searchParams.delete(sent);
+                        history.replaceState(history.state, "", url.pathname + url.search + url.hash);
+                    });
+                }
+
+                document.addEventListener("click", function (e) {
+                    var el = e.target instanceof Element ? e.target.closest("[data-track]") : null;
+                    if (!el) return;
+                    gtag("event", el.getAttribute("data-track"), {
+                        label: el.getAttribute("data-track-label") || undefined,
+                        link_url: el.getAttribute("href") || undefined,
+                        page_path: location.pathname,
+                    });
+                });
+            })();
         </script>
     </head>
 

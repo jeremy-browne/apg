@@ -1,4 +1,3 @@
-/// <reference types="@cloudflare/workers-types" />
 // Read a runtime environment variable / secret on Cloudflare Workers.
 //
 // Secrets set via `wrangler secret put` are runtime bindings — they are NOT

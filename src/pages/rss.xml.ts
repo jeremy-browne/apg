@@ -3,6 +3,7 @@ import { getEmDashCollection, getTermsForEntries } from "emdash";
 import type { APIContext } from "astro";
 
 import { SITE_SETTINGS } from "../site.config";
+import { mediaUrl } from "../utils/media";
 
 export async function GET(context: APIContext) {
   const { entries } = await getEmDashCollection("posts", {
@@ -13,6 +14,8 @@ export async function GET(context: APIContext) {
   const entryIds = entries.map((e) => e.data.id);
   const tagsByEntry = await getTermsForEntries("posts", entryIds, "tag");
 
+  const siteUrl = (context.site ?? new URL("https://aussiepilotguide.com")).href;
+
   return rss({
     title: SITE_SETTINGS.title,
     description: SITE_SETTINGS.description,
@@ -20,14 +23,15 @@ export async function GET(context: APIContext) {
     items: entries.map((entry) => {
       const slug = entry.data.slug ?? entry.id;
       const tags = (tagsByEntry.get(entry.data.id) ?? []).map((t) => t.label);
+      const image = mediaUrl(entry.data.featured_image);
       return {
         title: entry.data.title,
         pubDate: entry.data.publishedAt ?? entry.data.createdAt,
-        description: entry.data.description ?? "",
+        description: entry.data.excerpt ?? "",
         link: `/blog/${slug}/`,
-        ...(entry.data.featured_image?.src && {
+        ...(image && {
           enclosure: {
-            url: entry.data.featured_image.src,
+            url: new URL(image, siteUrl).href,
             type: "image/webp",
             length: 1,
           },

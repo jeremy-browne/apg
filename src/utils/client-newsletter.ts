@@ -3,6 +3,7 @@ import { actions } from "astro:actions";
 declare global {
   interface Window {
     turnstile?: { reset?: () => void };
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -62,6 +63,7 @@ if (!form) {
       } else {
         setIntent("success");
         setMsg("Check your inbox to confirm your subscription.");
+        window.gtag?.("event", "newsletter_signup", { form_location: "inline" });
         form.reset();
         window.turnstile?.reset?.();
 
