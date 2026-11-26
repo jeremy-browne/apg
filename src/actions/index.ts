@@ -1,5 +1,5 @@
 import { ActionError, defineAction } from "astro:actions";
-import { z } from "astro:schema";
+import { z } from "astro/zod";
 import { createToken } from "../utils/newsletterToken";
 import { readEnv } from "../utils/env";
 

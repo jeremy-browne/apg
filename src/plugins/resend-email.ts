@@ -1,4 +1,4 @@
-import { definePlugin, type PluginContext } from "emdash";
+import { definePlugin, type PluginContext, type RouteContext } from "emdash";
 
 /**
  * Standard EmDash email provider plugin backed by Resend (https://resend.com).
@@ -210,7 +210,15 @@ async function sendTestEmail(ctx: PluginContext, values: Record<string, unknown>
 	}
 }
 
+// emdash >= 1.0 requires id + version here (they must match the descriptor in
+// astro.config.mjs). Having an `id` is also what makes emdash call route
+// handlers with the single-arg RouteContext; without it they get the sandboxed
+// two-arg convention and ctx.kv etc. are undefined at runtime.
 export default definePlugin({
+	id: "emdash-resend-email",
+	version: "1.0.0",
+	capabilities: ["hooks.email-transport:register", "network:request"],
+	allowedHosts: ["api.resend.com"],
 	hooks: {
 		"email:deliver": {
 			exclusive: true,
@@ -240,8 +248,9 @@ export default definePlugin({
 
 	routes: {
 		admin: {
-			handler: async (routeCtx: { input: unknown }, ctx: PluginContext) => {
-				const interaction = routeCtx.input as BlockInteraction;
+			// emdash >= 1.0: one RouteContext (the PluginContext plus `input`).
+			handler: async (ctx: RouteContext) => {
+				const interaction = ctx.input as BlockInteraction;
 
 				if (interaction.type === "page_load" && interaction.page === "/settings") {
 					return buildSettingsPage(ctx);
