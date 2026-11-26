@@ -171,7 +171,7 @@ Use lowercase, hyphenated tags. Prefer existing tags over creating new ones. Com
 - **Media** is uploaded to R2 and served at `/_emdash/api/media/file/<storageKey>`. A media field is a reference (no ready `src`); resolve a URL with `mediaUrl()` in `src/utils/media.ts`.
 - **`siteUrl`** (`astro.config.mjs`) defaults to `https://aussiepilotguide.com`; override per-build with `EMDASH_SITE_URL`. It drives the WebAuthn **passkey rpId**, so admin passkeys are domain-bound — changing the domain invalidates existing passkeys (re-register on the new origin).
 - **Security headers** are set in `src/middleware.ts` (a Worker's static `_headers` only applies to assets, not SSR HTML). It skips `/_emdash/*` so the admin's iframes/passkeys keep working, and redirects `www` → apex.
-- **Forms** (`src/actions/`, `src/pages/api/newsletter/`) read runtime secrets via `readEnv()` in `src/utils/env.ts` (`locals.runtime.env`) — `import.meta.env` does **not** see `wrangler secret put` secrets at runtime on Workers.
+- **Forms** (`src/actions/`, `src/pages/api/newsletter/`) read runtime secrets via `readEnv()` in `src/utils/env.ts` (`env` from `cloudflare:workers`; Astro v6 removed `locals.runtime.env` and accessing it **throws**) — `import.meta.env` does **not** see `wrangler secret put` secrets at runtime on Workers.
 - **Dev gotcha:** `astro.config.mjs` sets `vite.ssr.noExternal: ["@astrojs/react"]` so the React renderer's `astro:react:opts` virtual module resolves; without it `npm run dev` crashes (`Received protocol 'astro:'`).
 - **File-based collections** (`authors`, `legal`, `about`, `licenses`) are still defined in `src/content.config.ts` with Zod schemas.
 

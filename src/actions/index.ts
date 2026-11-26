@@ -60,8 +60,8 @@ export const server = {
             "cf-turnstile-response": z.string().optional(),
         }),
         handler: async (input, context) => {
-            const turnstileSecret = readEnv(context.locals, "TURNSTILE_SECRET_KEY");
-            const resendApiKey = readEnv(context.locals, "RESEND_API_KEY");
+            const turnstileSecret = readEnv("TURNSTILE_SECRET_KEY");
+            const resendApiKey = readEnv("RESEND_API_KEY");
 
             if (turnstileSecret) {
                 const token = input["cf-turnstile-response"];
@@ -126,9 +126,9 @@ export const server = {
             "cf-turnstile-response": z.string().optional(),
         }),
         handler: async (input, context) => {
-            const turnstileSecret = readEnv(context.locals, "TURNSTILE_SECRET_KEY");
-            const resendApiKey = readEnv(context.locals, "RESEND_API_KEY");
-            const newsletterSecret = readEnv(context.locals, "NEWSLETTER_SECRET");
+            const turnstileSecret = readEnv("TURNSTILE_SECRET_KEY");
+            const resendApiKey = readEnv("RESEND_API_KEY");
+            const newsletterSecret = readEnv("NEWSLETTER_SECRET");
 
             if (turnstileSecret) {
                 const token = input["cf-turnstile-response"];
