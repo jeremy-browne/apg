@@ -2,6 +2,8 @@ import type { APIRoute } from "astro";
 import { getEmDashCollection, getTermsForEntries, extractPlainText } from "emdash";
 import { SITE_SETTINGS } from "../site.config";
 
+const toTitleCase = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
 type Post = { data: { publishedAt?: Date | null } };
 
 function sortPosts<T extends Post>(posts: T[]): T[] {
@@ -33,7 +35,8 @@ export const GET: APIRoute = async ({ site }) => {
   for (const post of sorted) {
     const slug = post.data.slug ?? post.id;
     const pubDate = post.data.publishedAt?.toISOString().split("T")[0];
-    const category = categoriesByEntry.get(post.data.id)?.[0]?.label ?? null;
+    const label = categoriesByEntry.get(post.data.id)?.[0]?.label;
+    const category = label ? toTitleCase(label) : null;
 
     lines.push("---");
     lines.push("");

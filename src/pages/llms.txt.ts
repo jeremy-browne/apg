@@ -3,6 +3,8 @@ import { getCollection } from "astro:content";
 import { getEmDashCollection, getTermsForEntries } from "emdash";
 import { SITE_SETTINGS } from "../site.config";
 
+const toTitleCase = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
 type Post = { data: { publishedAt?: Date | null } };
 
 function sortPosts<T extends Post>(posts: T[]): T[] {
@@ -49,7 +51,7 @@ export const GET: APIRoute = async ({ site }) => {
   lines.push("");
 
   for (const [category, posts] of grouped) {
-    lines.push(`## ${category}`);
+    lines.push(`## ${toTitleCase(category)}`);
     lines.push("");
     for (const post of posts) {
       const slug = post.data.slug ?? post.id;
